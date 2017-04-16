@@ -39,10 +39,6 @@
             </meta-data>
         </service>
 
-        <activity android:name=".activity.HistoryFragment"
-                  android:parentActivityName=".activity.MainActivity">
-        </activity>
-
         <service android:name=".tools.download.DownloadService"
             android:enabled="true">
         </service>
@@ -52,6 +48,14 @@
 
         <activity android:name=".activity.ApksInfoActivity">
         </activity>
+
+        <receiver android:name=".activity.MainActivity$BroardCast">
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_ADDED" />
+                <action android:name="android.intent.action.PACKAGE_REMOVED" />
+                <data android:scheme="package" />
+            </intent-filter>
+        </receiver>
 
     </application>
 

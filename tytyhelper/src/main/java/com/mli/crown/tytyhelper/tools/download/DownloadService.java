@@ -60,16 +60,15 @@ public class DownloadService extends Service{
 			return killSelf(intent, flags, startId);
 		}
 
+		DownloadStatus downloadHelper;
 		if(!downloadList.containsKey(url)) {
-			DownloadStatus downloadHelper = new DownloadStatus(new DownloadHelper(this, url));
+			downloadHelper = new DownloadStatus(new DownloadHelper(this, url));
 			downloadList.put(url, downloadHelper);
-			downloadHelper.mHelper.setDownlistener(downloadHelper.mUpdateListener);
-			downloadHelper.mHelper.start();
 		}else {
-			DownloadStatus downloadHelper = downloadList.get(url);
-			downloadHelper.mHelper.setDownlistener(downloadHelper.mUpdateListener);
-			downloadHelper.mHelper.start();
+			downloadHelper = downloadList.get(url);
 		}
+		downloadHelper.mHelper.setDownlistener(downloadHelper.mUpdateListener);
+		downloadHelper.mHelper.start();
 
 		if(mInteractionActivity != null) {
 			mInteractionActivity.updateList(new ArrayList<>(downloadList.values()));

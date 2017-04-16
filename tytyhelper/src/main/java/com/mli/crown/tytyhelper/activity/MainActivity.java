@@ -1,5 +1,8 @@
 package com.mli.crown.tytyhelper.activity;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.Fragment;
@@ -16,6 +19,7 @@ import com.mli.crown.tytyhelper.R;
 
 public class MainActivity extends AppCompatActivity {
 
+	private static Context mContext;
 	private DrawerLayout mDrawlayout;
 	private ActionBarDrawerToggle mDrawerToggle;
 	private View mMenuView;
@@ -29,6 +33,8 @@ public class MainActivity extends AppCompatActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+
+		mContext = getApplicationContext();
 
 		toolbar = (Toolbar) findViewById(R.id.main_toolbar);
 		toolbar.setTitle(getResources().getString(R.string.app_name));//设置Toolbar标题
@@ -109,6 +115,16 @@ public class MainActivity extends AppCompatActivity {
 	public void showFragment(Fragment fragment) {
 		FragmentManager fragmentManager = getSupportFragmentManager();
 		fragmentManager.beginTransaction().replace(R.id.main_content_frame, fragment).commit();
+	}
+
+	public static class BroardCast extends BroadcastReceiver {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if(intent.getAction().equals("android.intent.action.PACKAGE_ADDED")) {
+
+			}
+		}
 	}
 
 }

@@ -131,7 +131,8 @@ public class DownListAdapter extends BaseAdapter {
 				@Override
 				public void onClick(View v) {
 					if(mDownDone) {
-						test();
+						ApksInfoActivity.start(mContext, status.mHelper.getUrl());
+//						ApkInfoUtils.installApk(mContext, status.mHelper.getUrl());
 					}
 				}
 			});
@@ -183,17 +184,6 @@ public class DownListAdapter extends BaseAdapter {
 		return convertView;
 	}
 
-	private void test() {
-		Intent intent = new Intent(mContext, ApksInfoActivity.class);
-		intent.putExtra("u1", mDownloadStatuses.get(0).mHelper.getUrl());
-		intent.putExtra("u2", mDownloadStatuses.get(1).mHelper.getUrl());
-		intent.putExtra("u3", mDownloadStatuses.get(2).mHelper.getUrl());
-		intent.putExtra("u4", mDownloadStatuses.get(3).mHelper.getUrl());
-		intent.putExtra("u5", mDownloadStatuses.get(4).mHelper.getUrl());
-		intent.putExtra("u6", mDownloadStatuses.get(5).mHelper.getUrl());
-		intent.putExtra("u7", mDownloadStatuses.get(6).mHelper.getUrl());
-		mContext.startActivity(intent);
-	}
 	class ViewHolder {
 		ImageView mIconImgv;
 		TextView mFileNameTv;
@@ -202,37 +192,4 @@ public class DownListAdapter extends BaseAdapter {
 		Button mControlBtn;
 	}
 
-	class IconLoader {
-
-		Map<Drawable, ImageView> mViewMap = new HashMap<>();
-		Drawable mIcon;
-		TextView mTextView;
-
-		public IconLoader(ImageView imageView, TextView textView, String url) {
-			Drawable apkIcon = ApkInfoUtils.getAppIcon(mContext,
-				FileUtils.getDownloadFile(url).getAbsolutePath());
-			if(apkIcon != null) {
-				mIcon = apkIcon;
-				mViewMap.put(apkIcon, imageView);
-			}
-			mTextView = textView;
-			loadIcon();
-		}
-
-		public synchronized void loadIcon() {
-			if(mViewMap.values().size() != 0) {
-				try {
-					mViewMap.get(mIcon).setImageDrawable(mIcon);
-					mViewMap.get(mIcon).setVisibility(View.VISIBLE);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-//			CharSequence apkName = ApkInfoUtils.getAppLabel(mContext,
-//				FileUtils.getDownloadFile(mUrl).getAbsolutePath());
-//			if(apkName != null) {
-//				mTextView.setText(apkName + "\n" + FileUtils.getFilename(mUrl) + " 下载已完成");
-//			}
-		}
-	}
 }

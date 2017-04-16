@@ -2,33 +2,18 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:orientation="vertical"
 	android:layout_width="match_parent"
-	android:layout_height="match_parent">
+	android:layout_height="match_parent"
+	android:gravity="center">
 
-	<ListView
-		android:visibility="gone"
-		android:id="@+id/apks_info_listview"
+	<ImageView
+		android:id="@+id/apks_info_logo"
+		android:layout_width="100dp"
+		android:layout_height="100dp"/>
+
+	<TextView
+		android:id="@+id/apks_info_name"
 		android:layout_width="match_parent"
-		android:layout_height="match_parent">
-	</ListView>
-
-	<ImageView
-		android:id="@+id/i1"
-		android:layout_width="100dp"
-		android:layout_height="100dp"/>
-
-	<ImageView
-		android:id="@+id/i2"
-		android:layout_width="100dp"
-		android:layout_height="100dp"/>
-
-	<ImageView
-		android:id="@+id/i3"
-		android:layout_width="100dp"
-		android:layout_height="100dp"/>
-
-	<ImageView
-		android:id="@+id/i4"
-		android:layout_width="100dp"
-		android:layout_height="100dp"/>
+		android:layout_height="wrap_content"
+		android:gravity="center"/>
 
 </LinearLayout>
