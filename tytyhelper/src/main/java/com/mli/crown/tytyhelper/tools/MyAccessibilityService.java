@@ -10,6 +10,8 @@ import android.text.TextUtils;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 
+import com.mli.crown.tytyhelper.bean.SimpleLoginInfo;
+
 import java.util.List;
 
 /**
@@ -124,13 +126,16 @@ public class MyAccessibilityService extends AccessibilityService {
 	}
 
 	private void listenerLogin() {
+
+		SimpleLoginInfo loginInfo = InfoManager.getInfo(this);
+
 		AccessibilityNodeInfo accessibilityNodeInfo = getRootInActiveWindow();
 		List<AccessibilityNodeInfo> editTextList0 = accessibilityNodeInfo.
 			findAccessibilityNodeInfosByViewId(PACKAGE_ID + "input_username_edittext");
 		if(editTextList0 != null) {
 
 			for (AccessibilityNodeInfo info : editTextList0) {
-				setText(info, Config.USERNAME);
+				setText(info, loginInfo.getUsername());
 
 				break;
 			}
@@ -139,7 +144,7 @@ public class MyAccessibilityService extends AccessibilityService {
 				findAccessibilityNodeInfosByViewId(PACKAGE_ID + "input_password_edittext");
 			if(editTextList1 != null) {
 				for (final AccessibilityNodeInfo info : editTextList1) {
-					setText(info, Config.PASSWORD);
+					setText(info, loginInfo.getPasswrod());
 					break;
 				}
 			}
@@ -148,16 +153,15 @@ public class MyAccessibilityService extends AccessibilityService {
 				findAccessibilityNodeInfosByViewId(PACKAGE_ID + "login_btn");
 			if(btnList != null) {
 				for (AccessibilityNodeInfo info : btnList) {
-					if(!TextUtils.isEmpty(Config.USERNAME)
-						&& !TextUtils.isEmpty(Config.PASSWORD)) {
+					if(!TextUtils.isEmpty(loginInfo.getUsername())
+						&& !TextUtils.isEmpty(loginInfo.getPasswrod())) {
 						info.performAction(AccessibilityNodeInfo.ACTION_CLICK);
 					}
 
 					EntryDbHelper dbHelper = new EntryDbHelper(this);
-					dbHelper.saveInfo(Config.USERNAME, Config.PASSWORD, Config.DESC);
-					Config.USERNAME = null;
-					Config.PASSWORD = null;
-					Config.DESC = null;
+					dbHelper.saveInfo(loginInfo.getUsername(), loginInfo.getPasswrod(), loginInfo.getDesc());
+
+					InfoManager.clear(this);
 					break;
 				}
 			}
@@ -181,7 +185,8 @@ public class MyAccessibilityService extends AccessibilityService {
 	}
 
 	private boolean isLogoutAction() {
-		if(TextUtils.isEmpty(Config.USERNAME) || TextUtils.isEmpty(Config.PASSWORD)) {
+		SimpleLoginInfo loginInfo = InfoManager.getInfo(this);
+		if(TextUtils.isEmpty(loginInfo.getUsername()) || TextUtils.isEmpty(loginInfo.getPasswrod())) {
 			return false;
 		}else {
 			return true;

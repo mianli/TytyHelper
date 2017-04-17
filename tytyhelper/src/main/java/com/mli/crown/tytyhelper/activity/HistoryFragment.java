@@ -44,7 +44,7 @@ public class HistoryFragment extends Fragment {
 		mListview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				mList.get(position).resetConfigLoginInfo();
+				mList.get(position);
 				LoginHelper.getInstance(getActivity()).filterAndStartApp();
 			}
 		});
@@ -65,7 +65,7 @@ public class HistoryFragment extends Fragment {
 		.setPositiveButton("删除", new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				mDbHelper.delete(mList.get(position).getUsername(), mList.get(position).getPassword());
+				mDbHelper.delete(mList.get(position).getUsername(), mList.get(position).getPasswrod());
 				mList.remove(position);
 				mAdapter.notifyDataSetChanged();
 			}
@@ -111,10 +111,10 @@ public class HistoryFragment extends Fragment {
 			LoginInfo info = mList.get(position);
 			if(TextUtils.isEmpty(info.getDesc())) {
 				viewHolder.nameView.setText("用户名：" + mList.get(position).getUsername());
-				viewHolder.descView.setText("密码：" + mList.get(position).getPassword());
+				viewHolder.descView.setText("密码：" + mList.get(position).getPasswrod());
 			}else {
 				viewHolder.nameView.setText("用户名：" + mList.get(position).getUsername() +
-					"\t\t密码：" + mList.get(position).getPassword());
+					"\t\t密码：" + mList.get(position).getPasswrod());
 				viewHolder.descView.setText("描述：" + mList.get(position).getDesc());
 			}
 			return convertView;

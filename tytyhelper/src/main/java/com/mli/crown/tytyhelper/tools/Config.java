@@ -5,11 +5,6 @@ package com.mli.crown.tytyhelper.tools;
  */
 public class Config {
 
-	// FIXME: 2017/3/29 放入application或者换做其他方式进行缓存
-	public static String USERNAME;
-	public static String PASSWORD;
-	public static String DESC;
-
 	public static final String THIRD_PART_APP_NAME = "com.lingshi.inst.kids";
 	private static final String PREFIX_PACKAGE = "com.lingshi.tyty.inst";
 	public static final String LOGIN_ACTIVITY = PREFIX_PACKAGE + ".activity.UserLoginRegistActivity";

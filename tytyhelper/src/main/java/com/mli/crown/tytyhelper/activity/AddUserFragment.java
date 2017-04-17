@@ -10,7 +10,9 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.mli.crown.tytyhelper.R;
+import com.mli.crown.tytyhelper.bean.SimpleLoginInfo;
 import com.mli.crown.tytyhelper.tools.Config;
+import com.mli.crown.tytyhelper.tools.InfoManager;
 
 /**
  * Created by crown on 2017/3/21.
@@ -31,15 +33,19 @@ public class AddUserFragment extends Fragment {
 		loginBtn.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				String username = null;
+				String password = null;
+				String desc = null;
 				if(mUsernameEdt.getText() != null) {
-					Config.USERNAME = mUsernameEdt.getText().toString().trim();
+					username = mUsernameEdt.getText().toString().trim();
 				}
 				if(mPasswordEdt.getText() != null) {
-					Config.PASSWORD = mPasswordEdt.getText().toString().trim();
+					password = mPasswordEdt.getText().toString().trim();
 				}
 				if(descEdt.getText() != null) {
-					Config.DESC = descEdt.getText().toString();
+					desc = descEdt.getText().toString();
 				}
+				InfoManager.saveInfo(getActivity(), new SimpleLoginInfo(username, password, desc));
 				LoginHelper.getInstance(getActivity()).filterAndStartApp();
 			}
 		});
