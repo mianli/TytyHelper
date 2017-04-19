@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.text.TextUtils;
 
 import com.mli.crown.tytyhelper.bean.LoginInfo;
+import com.mli.crown.tytyhelper.bean.SimpleLoginInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,6 +82,16 @@ public class EntryDbHelper extends SQLiteOpenHelper {
 		String sql = "select * from " + TABLE_NAME + " where " + LoginInfo.USER_NAME + " = ?";
 		Cursor cursor = db.rawQuery(sql, new String[]{username});
 		return cursor;
+	}
+
+	public boolean isExist(SimpleLoginInfo info) {
+		SQLiteDatabase db = getReadableDatabase();
+		String sql = "select * from " + TABLE_NAME + " where " + LoginInfo.USER_NAME + " = ? and " + LoginInfo.PASSWORD +" = ? and " + LoginInfo.DESC + " = ?";
+		Cursor cursor = db.rawQuery(sql, new String[] {info.getUsername(), info.getPasswrod(), info.getDesc()});
+		if(cursor.getCount() != 0) {
+			return true;
+		}
+		return false;
 	}
 
 	public boolean isExist(String username) {

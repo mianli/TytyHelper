@@ -1,6 +1,8 @@
 package com.mli.crown.tytyhelper.activity.adapter.base;
 
+import android.view.View;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +39,51 @@ public class AbsListViewDataHelper<VIEW_TYPE extends AbsListView, DATA_TYPE> {
 
             }
         });
+    }
+
+    public void setOnItemClickListener(final OnItemClickListener<DATA_TYPE> onItemClickListener) {
+        mAbsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if(onItemClickListener != null) {
+                    onItemClickListener.onItemClick(position, mDataSource.get(position), view);
+                }
+            }
+        });
+    }
+
+    public void setOnItemLongClickLisetner(final OnItemLongClickListener<DATA_TYPE> onItemLongClickLisetner) {
+        mAbsListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                if(onItemLongClickLisetner != null) {
+                    return onItemLongClickLisetner.onItemLongClick(position, mDataSource.get(position), view);
+                }
+                return false;
+            }
+        });
+    }
+
+    public DATA_TYPE get(int index) {
+        return mDataSource.get(index);
+    }
+
+    public void remove(int index) {
+        mDataSource.remove(index);
+        mMyAdapter.notifyDataSetChanged();
+    }
+
+    public void clear() {
+        mDataSource.clear();
+        mMyAdapter.notifyDataSetChanged();
+    }
+
+    public interface OnItemClickListener<T> {
+        void onItemClick(int position, T data, View view);
+    }
+
+    public interface OnItemLongClickListener<T> {
+        boolean onItemLongClick(int position, T data, View view);
     }
 
 }

@@ -15,20 +15,28 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.mli.crown.tytyhelper.R;
+import com.mli.crown.tytyhelper.activity.adapter.base.AbsListViewDataHelper;
+import com.mli.crown.tytyhelper.activity.adapter.base.iAdapterItem;
+import com.mli.crown.tytyhelper.activity.adapter.base.iDataReceiver;
+import com.mli.crown.tytyhelper.activity.adapter.base.iReceiverData;
+import com.mli.crown.tytyhelper.activity.adapter.cell.HistoryCell;
 import com.mli.crown.tytyhelper.bean.LoginInfo;
+import com.mli.crown.tytyhelper.bean.SimpleLoginInfo;
 import com.mli.crown.tytyhelper.tools.EntryDbHelper;
+import com.mli.crown.tytyhelper.tools.InfoManager;
 
 import java.util.List;
 
 /**
  * Created by crown on 2017/3/22.
  */
-public class HistoryFragment extends Fragment {
+public class HistoryFragment extends Fragment implements iAdapterItem<LoginInfo>, iReceiverData<LoginInfo> {
 
-	private List<LoginInfo> mList;
 	private ListView mListview;
-	private HistoryAdapter mAdapter;
 	private EntryDbHelper mDbHelper;
+
+	private AbsListViewDataHelper<ListView, LoginInfo> mAdapterHelper;
+	private HistoryCell mCell = new HistoryCell();
 
 	@Nullable
 	@Override
@@ -36,22 +44,21 @@ public class HistoryFragment extends Fragment {
 
 		View view = inflater.inflate(R.layout.activity_history, container, false);
 
-		mDbHelper = new EntryDbHelper(getActivity());
-		mList = mDbHelper.getList();
-
 		mListview = (ListView) view.findViewById(R.id.history_listview);
-		mListview.setAdapter(mAdapter = new HistoryAdapter());
-		mListview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+		mAdapterHelper = new AbsListViewDataHelper<>(mListview, this, this);
+		mAdapterHelper.load();
+		mAdapterHelper.setOnItemClickListener(new AbsListViewDataHelper.OnItemClickListener<LoginInfo>() {
 			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				mList.get(position);
+			public void onItemClick(int position, LoginInfo data, View view) {
+				InfoManager.saveInfo(getActivity(), data);
 				LoginHelper.getInstance(getActivity()).filterAndStartApp();
 			}
 		});
-		mListview.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+		mAdapterHelper.setOnItemLongClickLisetner(new AbsListViewDataHelper.OnItemLongClickListener<LoginInfo>() {
 			@Override
-			public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-				showDeleteDialog(position);
+			public boolean onItemLongClick(int position, LoginInfo data, View view) {
+				showDeleteDialog(position, data);
 				return true;
 			}
 		});
@@ -59,70 +66,36 @@ public class HistoryFragment extends Fragment {
 		return view;
 	}
 
-	public void showDeleteDialog(final int position) {
+	public void showDeleteDialog(final int position, final LoginInfo info) {
 		new AlertDialog.Builder(getActivity()).setTitle("删除该条记录?")
 		.setNegativeButton("取消", null)
 		.setPositiveButton("删除", new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				mDbHelper.delete(mList.get(position).getUsername(), mList.get(position).getPasswrod());
-				mList.remove(position);
-				mAdapter.notifyDataSetChanged();
+				mDbHelper.delete(info.getUsername(), info.getPasswrod());
+				mAdapterHelper.remove(position);
 			}
 		}).show();
 	}
 
 	public void clearHistory() {
 		mDbHelper.clearTable();
-		mList.clear();
-		mAdapter.notifyDataSetChanged();
+		mAdapterHelper.clear();
 	}
 
-	private class HistoryAdapter extends BaseAdapter {
+	@Override
+	public View createCell(int position, View convertView) {
+		return mCell.createCell(getActivity(), position, convertView);
+	}
 
-		@Override
-		public int getCount() {
-			return mList != null ? mList.size() : 0;
-		}
+	@Override
+	public void updateCell(View view, int position, LoginInfo data) {
+		mCell.updateCell(position, data);
+	}
 
-		@Override
-		public Object getItem(int position) {
-			return position;
-		}
-
-		@Override
-		public long getItemId(int position) {
-			return position;
-		}
-
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			ViewHolder viewHolder = null;
-			if(convertView == null) {
-				viewHolder = new ViewHolder();
-				convertView = getActivity().getLayoutInflater().inflate(R.layout.item_history, parent, false);
-				viewHolder.nameView = (TextView) convertView.findViewById(R.id.item_history_user_name);
-				viewHolder.descView = (TextView) convertView.findViewById(R.id.item_history_user_desc);
-				convertView.setTag(viewHolder);
-			}else {
-				viewHolder = (ViewHolder) convertView.getTag();
-			}
-
-			LoginInfo info = mList.get(position);
-			if(TextUtils.isEmpty(info.getDesc())) {
-				viewHolder.nameView.setText("用户名：" + mList.get(position).getUsername());
-				viewHolder.descView.setText("密码：" + mList.get(position).getPasswrod());
-			}else {
-				viewHolder.nameView.setText("用户名：" + mList.get(position).getUsername() +
-					"\t\t密码：" + mList.get(position).getPasswrod());
-				viewHolder.descView.setText("描述：" + mList.get(position).getDesc());
-			}
-			return convertView;
-		}
-
-		class ViewHolder {
-			TextView nameView;
-			TextView descView;
-		}
+	@Override
+	public void setData(iDataReceiver<LoginInfo> receiver) {
+		mDbHelper = new EntryDbHelper(getActivity());
+		receiver.receiver(mDbHelper.getList());
 	}
 }

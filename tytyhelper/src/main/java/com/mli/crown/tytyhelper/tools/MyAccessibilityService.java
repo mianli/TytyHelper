@@ -10,6 +10,7 @@ import android.text.TextUtils;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 
+import com.mli.crown.tytyhelper.bean.LoginInfo;
 import com.mli.crown.tytyhelper.bean.SimpleLoginInfo;
 
 import java.util.List;
@@ -159,7 +160,9 @@ public class MyAccessibilityService extends AccessibilityService {
 					}
 
 					EntryDbHelper dbHelper = new EntryDbHelper(this);
-					dbHelper.saveInfo(loginInfo.getUsername(), loginInfo.getPasswrod(), loginInfo.getDesc());
+					if(!dbHelper.isExist(loginInfo)) {
+						dbHelper.saveInfo(loginInfo.getUsername(), loginInfo.getPasswrod(), loginInfo.getDesc());
+					}
 
 					InfoManager.clear(this);
 					break;
