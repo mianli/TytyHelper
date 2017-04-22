@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="theme_color">#55adad</color>
+    <color name="white">#ffffffff</color>
+    <color name="white_half_alpha">#b1ffffff</color>
+    <color name="white_high_alpha">#55ffffff</color>
+    <color name="black">#ff000000</color>
+    <color name="black_half_alpha">#b1000000</color>
+
+</resources>

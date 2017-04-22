@@ -44,7 +44,10 @@ public class AddUserFragment extends Fragment {
 				}
 				if(descEdt.getText() != null) {
 					desc = descEdt.getText().toString();
+				}else {
+					desc = "";
 				}
+
 				InfoManager.saveInfo(getActivity(), new SimpleLoginInfo(username, password, desc));
 				LoginHelper.getInstance(getActivity()).filterAndStartApp();
 			}

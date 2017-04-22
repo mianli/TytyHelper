@@ -3,7 +3,6 @@ package com.mli.crown.tytyhelper.activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
@@ -16,14 +15,17 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.mli.crown.tytyhelper.R;
+import com.mli.crown.tytyhelper.tools.MyToast;
+import com.mli.crown.tytyhelper.tools.Utils;
 
 public class MainActivity extends AppCompatActivity {
 
-	private static Context mContext;
 	private DrawerLayout mDrawlayout;
 	private ActionBarDrawerToggle mDrawerToggle;
-	private View mMenuView;
+	private View mDrawerContainer;
 	private Toolbar toolbar;
+
+	private View mOpenDrawerView;
 
 	private HistoryFragment mHistoryFragment;
 	private AddUserFragment mAdUserFragment;
@@ -34,11 +36,9 @@ public class MainActivity extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		mContext = getApplicationContext();
-
 		toolbar = (Toolbar) findViewById(R.id.main_toolbar);
-		toolbar.setTitle(getResources().getString(R.string.app_name));//设置Toolbar标题
-		toolbar.setTitleTextColor(Color.parseColor("#000000")); //设置标题颜色
+		toolbar.setTitle(getResources().getString(R.string.app_name));
+		toolbar.setTitleTextColor(getResources().getColor(R.color.white));
 		toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
 			@Override
 			public boolean onMenuItemClick(MenuItem item) {
@@ -56,36 +56,53 @@ public class MainActivity extends AppCompatActivity {
 		});
 		if(getSupportActionBar() != null) {
 			setSupportActionBar(toolbar);
-			getSupportActionBar().setHomeButtonEnabled(true); //设置返回键可用
+//			getSupportActionBar().setHomeButtonEnabled(true); //设置返回键可用
 			getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		}
+		toolbar.inflateMenu(R.menu.menu_main);
+
+		mOpenDrawerView = findView(R.id.main_show_drawer);
+		mOpenDrawerView.setVisibility(View.GONE);
+		mOpenDrawerView.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				mDrawlayout.openDrawer(mDrawerContainer);
+			}
+		});
 
 		mDrawlayout = (DrawerLayout) findViewById(R.id.main_drawlayout);
-		mDrawlayout.setDrawerShadow(R.drawable.notication, GravityCompat.START);
-		mMenuView = findViewById(R.id.main_menu_view);
+//		mDrawlayout.setDrawerShadow(R.drawable.notication, GravityCompat.START);
+		mDrawerContainer = findViewById(R.id.main_drawer_container);
 		if(savedInstanceState == null) {
 			if(mHistoryFragment == null) {
 				showFragment(mHistoryFragment = new HistoryFragment());
 			}
 		}
 
-		mDrawerToggle = new ActionBarDrawerToggle(this, mDrawlayout, toolbar, R.string.app_name, R.string.app_name) {
+		mDrawerToggle = new ActionBarDrawerToggle(this, mDrawlayout, toolbar, 0, 0) {
 			@Override
 			public void onDrawerOpened(View drawerView) {
 				super.onDrawerOpened(drawerView);
+
+				mOpenDrawerView.setEnabled(false);
 			}
 			@Override
 			public void onDrawerClosed(View drawerView) {
 				super.onDrawerClosed(drawerView);
+
+				mOpenDrawerView.setEnabled(true);
+
 				if(mHistoryFragment != null && mHistoryFragment.isVisible()) {
-					toolbar.inflateMenu(R.menu.menu_main);
+					toolbar.getMenu().clear();
+						toolbar.inflateMenu(R.menu.menu_main);
 				}else if(toolbar.getMenu() != null) {
 					toolbar.getMenu().clear();
 				}
 			}
 		};
 		mDrawerToggle.syncState();
-		mDrawlayout.setDrawerListener(mDrawerToggle);
+		mDrawlayout.addDrawerListener(mDrawerToggle);
+
 	}
 
 	public void showDownload(View view) {
@@ -93,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
 			mDownloadFragment = new DownloadFragment();
 		}
 		showFragment(mDownloadFragment);
-		mDrawlayout.closeDrawer(mMenuView);
+		mDrawlayout.closeDrawer(mDrawerContainer);
 	}
 
 	public void showAddUser(View view) {
@@ -101,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
 			mAdUserFragment = new AddUserFragment();
 		}
 		showFragment(mAdUserFragment);
-		mDrawlayout.closeDrawer(mMenuView);
+		mDrawlayout.closeDrawer(mDrawerContainer);
 	}
 
 	public void showHistory(View view) {
@@ -109,7 +126,14 @@ public class MainActivity extends AppCompatActivity {
 			mHistoryFragment = new HistoryFragment();
 		}
 		showFragment(mHistoryFragment);
-		mDrawlayout.closeDrawer(mMenuView);
+		mDrawlayout.closeDrawer(mDrawerContainer);
+	}
+
+	public void checkAccessibilityEnable(View view) {
+		if(!Utils.isAccessibilitySettingsEnable(this)) {
+			MyToast.longShow(this, "请打开辅助功能");
+			Utils.openAccessibilitySetting(this);
+		}
 	}
 
 	public void showFragment(Fragment fragment) {
@@ -125,6 +149,16 @@ public class MainActivity extends AppCompatActivity {
 
 			}
 		}
+	}
+
+	@Override
+	protected void onDestroy() {
+		mDrawlayout.removeDrawerListener(mDrawerToggle);
+		super.onDestroy();
+	}
+
+	private <VIEW_TYPE> VIEW_TYPE findView(int id) {
+		return (VIEW_TYPE) findViewById(id);
 	}
 
 }

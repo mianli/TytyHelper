@@ -13,7 +13,13 @@ public class Config {
 		+ ".StuProfileActivity";
 	public static final String TEACHER_PROFILE_ACTIVITY = "com.lingshi.tyty.inst.activity"
 		+".MyProfileActivity";
-	public static final String DIALOG = "com.lingshi.tyty.common.customView.MDialog";
+
+	//debug
+	public static final String COMMEN_PCKG = "com.lingshi.tyty.common.customView";
+	//release
+	public static final String DIALOG = "com.lingshi.tyty.common.customView";
+
+
 	public static final String SPLASH_ACTIVITY = "com.lingshi.inst.kids.activity.SplashActivity";
 
 }
