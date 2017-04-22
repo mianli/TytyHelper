@@ -3,10 +3,10 @@
 	  android:layout_width="match_parent"
 	  android:layout_height="match_parent">
 
-	<ListView
-		android:id="@+id/history_listview"
+	<com.mli.crown.tytyhelper.customview.SwipeRefreshListView
+		android:id="@+id/history_swiperefresh_listview"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent">
-	</ListView>
+	</com.mli.crown.tytyhelper.customview.SwipeRefreshListView>
 
 </FrameLayout>

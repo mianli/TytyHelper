@@ -9,6 +9,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.provider.Settings;
 import android.text.TextUtils;
+import android.view.View;
 
 import com.mli.crown.tytyhelper.BuildConfig;
 
@@ -89,5 +90,14 @@ public class Utils {
                 }).show();
     }
 
+    @SuppressWarnings("unchecked")
+    public static <T> T cast(Object obj) {
+        return (T) obj;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <VIEW_TYPE> VIEW_TYPE findView(View view, int id) {
+        return (VIEW_TYPE) view.findViewById(id);
+    }
 
 }

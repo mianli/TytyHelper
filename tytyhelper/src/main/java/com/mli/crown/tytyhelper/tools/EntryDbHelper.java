@@ -7,6 +7,7 @@ import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.text.TextUtils;
+import android.widget.ListView;
 
 import com.mli.crown.tytyhelper.bean.LoginInfo;
 import com.mli.crown.tytyhelper.bean.SimpleLoginInfo;
@@ -117,6 +118,35 @@ public class EntryDbHelper extends SQLiteOpenHelper {
 	public List<LoginInfo> getList() {
 		SQLiteDatabase db = getReadableDatabase();
 		String sql = "select * from " + TABLE_NAME;
+		Cursor cursor = db.rawQuery(sql, null);
+		if(cursor == null) {
+			return null;
+		}
+		List<LoginInfo> list = new ArrayList<>();
+		if(cursor.getCount() > 0) {
+			cursor.moveToFirst();
+			do {
+				String name = cursor.getString(cursor.getColumnIndexOrThrow(LoginInfo.USER_NAME));
+				String password = cursor.getString(cursor.getColumnIndexOrThrow(LoginInfo.PASSWORD));
+				String desc = cursor.getString(cursor.getColumnIndexOrThrow(LoginInfo.DESC));
+				long saveTime = cursor.getInt(cursor.getColumnIndexOrThrow(LoginInfo.SAVE_TIME));
+
+				list.add(new LoginInfo(name, password, desc, saveTime));
+			}while (cursor.moveToNext());
+		}
+		cursor.close();
+		db.close();
+		return list;
+	}
+
+	public List<LoginInfo> getList(int startPos, int endPos) {
+		SQLiteDatabase db = getReadableDatabase();
+		String sql = null;
+		if(startPos < 0) {
+			sql = "select * from " + TABLE_NAME;
+		}else {
+			sql = "select * from " + TABLE_NAME + " limit " + startPos + "," + (endPos - startPos);
+		}
 		Cursor cursor = db.rawQuery(sql, null);
 		if(cursor == null) {
 			return null;
