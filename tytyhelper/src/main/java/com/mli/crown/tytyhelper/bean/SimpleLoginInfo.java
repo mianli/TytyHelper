@@ -13,9 +13,9 @@ public class SimpleLoginInfo {
     private String mDesc;
 
     public SimpleLoginInfo(String username, String password, String desc) {
-        this.mUsername = username;
-        this.mPasswrod = password;
-        this.mDesc = desc;
+        this.mUsername = username == null ? "" : username;
+        this.mPasswrod = password == null ? "" : password;
+        this.mDesc = desc == null ? "" : desc;
     }
 
     public String getUsername() {

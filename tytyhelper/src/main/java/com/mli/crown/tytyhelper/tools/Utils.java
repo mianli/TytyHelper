@@ -1,6 +1,8 @@
 package com.mli.crown.tytyhelper.tools;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
@@ -73,5 +75,19 @@ public class Utils {
         }
         return false;
     }
+
+    public static void showOpenAccessibilitySetting(final Context context, DialogInterface.OnClickListener listener) {
+        new AlertDialog.Builder(context).setTitle("提示").
+                setMessage("辅助功能没有开启，现在开启？").
+                setNegativeButton("取消", null).
+                setNeutralButton("不开启", listener).
+                setPositiveButton("去开启", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Utils.openAccessibilitySetting(context);
+                    }
+                }).show();
+    }
+
 
 }

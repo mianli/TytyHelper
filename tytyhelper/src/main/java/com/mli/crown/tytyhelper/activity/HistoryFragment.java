@@ -24,6 +24,7 @@ import com.mli.crown.tytyhelper.bean.LoginInfo;
 import com.mli.crown.tytyhelper.bean.SimpleLoginInfo;
 import com.mli.crown.tytyhelper.tools.EntryDbHelper;
 import com.mli.crown.tytyhelper.tools.InfoManager;
+import com.mli.crown.tytyhelper.tools.Utils;
 
 import java.util.List;
 
@@ -50,9 +51,19 @@ public class HistoryFragment extends Fragment implements iAdapterItem<LoginInfo>
 		mAdapterHelper.load();
 		mAdapterHelper.setOnItemClickListener(new AbsListViewDataHelper.OnItemClickListener<LoginInfo>() {
 			@Override
-			public void onItemClick(int position, LoginInfo data, View view) {
-				InfoManager.saveInfo(getActivity(), data);
-				LoginHelper.getInstance(getActivity()).filterAndStartApp();
+			public void onItemClick(int position, final LoginInfo data, View view) {
+				if(Utils.isAccessibilitySettingsEnable(getActivity())) {
+					InfoManager.saveInfo(getActivity(), data);
+					LoginHelper.getInstance(getActivity()).filterAndStartApp();
+				}else {
+					Utils.showOpenAccessibilitySetting(getActivity(), new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							InfoManager.saveInfo(getActivity(), data);
+							LoginHelper.getInstance(getActivity()).filterAndStartApp();
+						}
+					});
+				}
 			}
 		});
 		mAdapterHelper.setOnItemLongClickLisetner(new AbsListViewDataHelper.OnItemLongClickListener<LoginInfo>() {
