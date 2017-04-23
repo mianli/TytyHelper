@@ -21,7 +21,7 @@ public class DownloadService extends Service{
 
 	public static final String DOWNLOAD_URL = "url";
 
-	private DownListActivity mInteractionActivity;
+	private iGetUpdateListListener mGetUpdateListener;
 
 	private Map<String, DownloadStatus> downloadList = new HashMap<>();
 
@@ -31,8 +31,8 @@ public class DownloadService extends Service{
 			return new ArrayList<>(downloadList.values());
 		}
 
-		public void setInteractionActivity(DownListActivity activity) {
-			mInteractionActivity = activity;
+		public void setUpdateListListener(iGetUpdateListListener listener) {
+			mGetUpdateListener = listener;
 		}
 
 	}
@@ -70,8 +70,8 @@ public class DownloadService extends Service{
 		downloadHelper.mHelper.setDownlistener(downloadHelper.mUpdateListener);
 		downloadHelper.mHelper.start();
 
-		if(mInteractionActivity != null) {
-			mInteractionActivity.updateList(new ArrayList<>(downloadList.values()));
+		if(mGetUpdateListener != null) {
+			mGetUpdateListener.updateList(new ArrayList<>(downloadList.values()));
 		}
 
 		return super.onStartCommand(intent, flags, startId);

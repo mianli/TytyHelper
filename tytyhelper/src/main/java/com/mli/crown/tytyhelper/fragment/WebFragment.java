@@ -1,8 +1,13 @@
 package com.mli.crown.tytyhelper.fragment;
 
+import android.app.Activity;
+import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -13,22 +18,43 @@ import android.view.ViewGroup;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.mli.crown.tytyhelper.R;
+import com.mli.crown.tytyhelper.tools.ApkInfoUtils;
 import com.mli.crown.tytyhelper.tools.MyToast;
 import com.mli.crown.tytyhelper.tools.PropertyLoader;
 import com.mli.crown.tytyhelper.tools.Utils;
+import com.mli.crown.tytyhelper.tools.download.DownloadHelper;
 import com.mli.crown.tytyhelper.tools.download.DownloadService;
+import com.mli.crown.tytyhelper.tools.download.DownloadStatus;
+import com.mli.crown.tytyhelper.tools.download.iDownItemStatusListener;
+import com.mli.crown.tytyhelper.tools.download.iGetUpdateListListener;
 import com.mli.crown.tytyhelper.tools.iResultListener;
+
+import java.util.List;
 
 /**
  * Created by mli on 2017/4/22.
  */
 
-public class WebFragment extends Fragment {
+public class WebFragment extends Fragment implements iGetUpdateListListener {
 
-    WebView mWebview;
+    private DownloadService.DownloadBind mBinder;
+    private WebView mWebview;
     private View mView;
+    private Handler mHandler;
+
+    private ViewHolder mViewHolder;
+
+    class ViewHolder {
+        TextView mFileNameTv;
+        TextView mSpeedTv;
+        ProgressBar mProgressBar;
+        Button mControlBtn;
+    }
 
     @Nullable
     @Override
@@ -72,6 +98,17 @@ public class WebFragment extends Fragment {
                 refreshLayout.setRefreshing(false);
             }
         });
+
+        mViewHolder = new ViewHolder();
+        mViewHolder.mFileNameTv = Utils.findView(mView, R.id.web_filename);
+        mViewHolder.mSpeedTv = Utils.findView(mView, R.id.web_speed);
+        mViewHolder.mProgressBar = Utils.findView(mView, R.id.web_progressbar);
+        mViewHolder.mControlBtn = Utils.findView(mView, R.id.web_control_btn);
+
+        Intent downIntent = new Intent(getActivity(), DownloadService.class);
+        getActivity().bindService(downIntent, mConnection, Activity.BIND_AUTO_CREATE);
+
+        mHandler = new Handler();
 
         return mView;
     }
@@ -117,4 +154,87 @@ public class WebFragment extends Fragment {
         listener.getResult(Utils.getNetworkStatus(getActivity()));
     }
 
+    private ServiceConnection mConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            if(service instanceof DownloadService.DownloadBind) {
+                mBinder = (DownloadService.DownloadBind) service;
+                mBinder.setUpdateListListener(WebFragment.this);
+
+                if(mBinder == null) {
+                    return;
+                }
+
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        uploadStatus(mBinder.getDownlist());
+                    }
+                });
+            }
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+
+        }
+    };
+
+    @Override
+    public void updateList(List<DownloadStatus> helpers) {
+        uploadStatus(helpers);
+    }
+
+    private void uploadStatus(List<DownloadStatus> downlist) {
+        if(downlist != null && downlist.size() > 0) {
+            final DownloadStatus mStatus = downlist.get(0);
+            mStatus.setStatusListener(new iDownItemStatusListener() {
+                @Override
+                public void update(final DownloadStatus status) {
+                    mHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            int percent = (int) (1.f * status.totalSize / status.contentSize * 100);
+                            if(percent == 100) {
+                                mViewHolder.mFileNameTv.setText(status.fileName + "下载已完成");
+                                mViewHolder.mSpeedTv.setText("");
+                                mViewHolder.mControlBtn.setText("安装");
+                                mViewHolder.mControlBtn.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        ApkInfoUtils.installApk(getActivity(), status.mHelper.getUrl());
+                                    }
+                                });
+                            }else if(percent != 0){
+                                mViewHolder.mFileNameTv.setText(status.fileName + "正在下载");
+                                mViewHolder.mSpeedTv.setText("速度:" + status.speed);
+                                mViewHolder.mControlBtn.setText(mStatus.mHelper.getStatus() == DownloadHelper.eStatus.downloading ? "暂停" : "继续");
+                                mViewHolder.mProgressBar.setProgress(percent);
+                                mViewHolder.mControlBtn.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        mStatus.mHelper.start();
+                                    }
+                                });
+                            }else {
+                                mViewHolder.mControlBtn.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+
+                                    }
+                                });
+                            }
+                        }
+                    });
+                }
+            });
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        getActivity().unbindService(mConnection);
+        super.onDestroy();
+    }
 }

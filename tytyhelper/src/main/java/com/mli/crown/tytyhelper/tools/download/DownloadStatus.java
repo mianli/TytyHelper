@@ -20,8 +20,14 @@ public class DownloadStatus {
 	public boolean failed;
 	public DownloadHelper.iDownloadStatusListener mUpdateListener;
 
+	public iDownItemStatusListener mStatusListener;
+
 	public DownloadStatus(DownloadHelper downloadHelper) {
 		setDownloadHelper(downloadHelper);
+	}
+
+	public void setStatusListener(iDownItemStatusListener statusListener) {
+		this.mStatusListener = statusListener;
 	}
 
 	public void setDownloadHelper(DownloadHelper downloadHelper) {
@@ -36,12 +42,20 @@ public class DownloadStatus {
 				DownloadStatus.this.speed = speed;
 				DownloadStatus.this.done = done;
 				DownloadStatus.this.failed = false;
+
+				if(mStatusListener != null) {
+					mStatusListener.update(DownloadStatus.this);
+				}
 			}
 
 			@Override
 			public void failure(Call call, IOException e) {
 				DownloadStatus.this.done = true;
 				DownloadStatus.this.failed = true;
+
+				if(mStatusListener != null) {
+					mStatusListener.update(DownloadStatus.this);
+				}
 			}
 		};
 	}

@@ -13,6 +13,7 @@ import android.widget.ListView;
 import com.mli.crown.tytyhelper.R;
 import com.mli.crown.tytyhelper.tools.download.DownloadService;
 import com.mli.crown.tytyhelper.tools.download.DownloadStatus;
+import com.mli.crown.tytyhelper.tools.download.iGetUpdateListListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +21,7 @@ import java.util.List;
 /**
  * Created by crown on 2017/3/26.
  */
-public class DownListActivity extends AppCompatActivity{
+public class DownListActivity extends AppCompatActivity implements iGetUpdateListListener {
 
 	private List<String> mDownloadList = new ArrayList<>();
 
@@ -36,7 +37,7 @@ public class DownListActivity extends AppCompatActivity{
 		public void onServiceConnected(ComponentName name, IBinder service) {
 			if(service instanceof DownloadService.DownloadBind) {
 				mBinder = (DownloadService.DownloadBind) service;
-				mBinder.setInteractionActivity(DownListActivity.this);
+				mBinder.setUpdateListListener(DownListActivity.this);
 
 				if(mBinder == null) {
 					return;
@@ -56,6 +57,7 @@ public class DownListActivity extends AppCompatActivity{
 		}
 	};
 
+	@Override
 	public void updateList(List<DownloadStatus> helpers) {
 		mDownList = helpers;
 		mAdapter.notifyDataSetChanged(mDownList);
