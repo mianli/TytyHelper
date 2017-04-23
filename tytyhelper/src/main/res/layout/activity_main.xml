@@ -68,6 +68,24 @@
 			</View>
 
 			<TextView
+				android:id="@+id/webpage_item"
+				android:layout_width="match_parent"
+				android:layout_height="@dimen/button_height"
+				android:gravity="center"
+				android:textColor="#ffffff"
+				android:text="测试下载"
+				android:background="@android:color/transparent"
+				android:onClick="showWebpage"/>
+
+			<View
+				android:layout_width="match_parent"
+				android:layout_height="0.5dp"
+				android:layout_marginLeft="10dp"
+				android:layout_marginRight="10dp"
+				android:background="@color/white_high_alpha">
+			</View>
+
+			<TextView
 				android:id="@+id/download_item"
 				android:layout_width="match_parent"
 				android:layout_height="@dimen/button_height"

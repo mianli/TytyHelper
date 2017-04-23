@@ -1,11 +1,9 @@
 package com.mli.crown.tytyhelper.activity.adapter.base;
 
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.util.Log;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ListView;
 
 import com.mli.crown.tytyhelper.customview.SwipeRefreshListView;
 
@@ -17,6 +15,8 @@ import java.util.List;
  */
 
 public class AbsListViewDataHelper<VIEW_TYPE extends AbsListView, DATA_TYPE> {
+
+    public static final int NO_PAGING = -1;//无分页
 
     private SwipeRefreshListView mSwipeRefreshListView;
     private VIEW_TYPE mAbsListView;
@@ -63,6 +63,12 @@ public class AbsListViewDataHelper<VIEW_TYPE extends AbsListView, DATA_TYPE> {
 //                        startLoad();
                     }
                 } else if ((firstVisibleItem + visibleItemCount) == totalItemCount) {
+
+                    if(mCountPerPage < 0) {
+                        //没有分页功能
+                        return;
+                    }
+
                     View lastVisibleItemView = mAbsListView.getChildAt(mAbsListView.getChildCount() - 1);
 
                     if (lastVisibleItemView != null &&
@@ -79,7 +85,7 @@ public class AbsListViewDataHelper<VIEW_TYPE extends AbsListView, DATA_TYPE> {
             return;
         }
 
-        mSouce.setData(0, mCountPerPage - 1, new iDataReceiver<DATA_TYPE>() {
+        mSouce.receiveData(0, mCountPerPage - 1, new iDataReceiver<DATA_TYPE>() {
             @Override
             public void receiver(List<DATA_TYPE> list) {
                 isLastPage = false;
@@ -104,7 +110,7 @@ public class AbsListViewDataHelper<VIEW_TYPE extends AbsListView, DATA_TYPE> {
         }
 
         mIsBlock = true;
-        mSouce.setData(startPos, endPos, new iDataReceiver<DATA_TYPE>() {
+        mSouce.receiveData(startPos, endPos, new iDataReceiver<DATA_TYPE>() {
             @Override
             public void receiver(List<DATA_TYPE> list) {
 

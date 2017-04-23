@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
 
 	private HistoryFragment mHistoryFragment;
 	private AddUserFragment mAdUserFragment;
+	private WebFragment mWebFragment;
 	private DownloadFragment mDownloadFragment;
 
 	@Override
@@ -106,26 +107,32 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 	public void showDownload(View view) {
-		if(mDownloadFragment == null) {
-			mDownloadFragment = new DownloadFragment();
-		}
-		showFragment(mDownloadFragment);
-		mDrawlayout.closeDrawer(mDrawerContainer);
+		showFragment(mDownloadFragment, DownloadFragment.class);
 	}
 
 	public void showAddUser(View view) {
-		if(mAdUserFragment == null) {
-			mAdUserFragment = new AddUserFragment();
-		}
-		showFragment(mAdUserFragment);
-		mDrawlayout.closeDrawer(mDrawerContainer);
+		showFragment(mAdUserFragment, AddUserFragment.class);
 	}
 
 	public void showHistory(View view) {
-		if(mHistoryFragment == null) {
-			mHistoryFragment = new HistoryFragment();
+		showFragment(mHistoryFragment, HistoryFragment.class);
+	}
+
+	public void showWebpage(View view) {
+		showFragment(mWebFragment, WebFragment.class);
+	}
+
+	public void showFragment(Fragment fragment, Class cls) {
+		if(fragment == null) {
+			try {
+				fragment = (Fragment) cls.newInstance();
+			} catch (InstantiationException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			}
 		}
-		showFragment(mHistoryFragment);
+		showFragment(fragment);
 		mDrawlayout.closeDrawer(mDrawerContainer);
 	}
 

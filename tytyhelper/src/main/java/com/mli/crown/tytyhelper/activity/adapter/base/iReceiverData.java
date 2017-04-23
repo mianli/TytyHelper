@@ -6,6 +6,6 @@ package com.mli.crown.tytyhelper.activity.adapter.base;
 
 public interface iReceiverData<DATA_TYPE> {
 
-    void setData(int startPos, int endPos, iDataReceiver<DATA_TYPE> receiver);
+    void receiveData(int startPos, int endPos, iDataReceiver<DATA_TYPE> receiver);
 
 }

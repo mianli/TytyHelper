@@ -115,7 +115,7 @@ public class HistoryFragment extends Fragment implements iAdapterItem<LoginInfo>
 	}
 
 	@Override
-	public void setData(int startPos, int endPos, iDataReceiver<LoginInfo> receiver) {
+	public void receiveData(int startPos, int endPos, iDataReceiver<LoginInfo> receiver) {
 		receiver.receiver(mDbHelper.getList(startPos, endPos));
 	}
 }

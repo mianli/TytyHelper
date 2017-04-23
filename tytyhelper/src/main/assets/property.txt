@@ -1,1 +1,2 @@
-http://iiiview.com/instKids/download/package/TYTY.apk
+apk:http://iiiview.com/instKids/download/package/TYTY.apk
+webpage:http://iiiview.com/instKids/download/
