@@ -1,4 +1,4 @@
-package com.mli.crown.tytyhelper.activity;
+package com.mli.crown.tytyhelper.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,6 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.mli.crown.tytyhelper.R;
+import com.mli.crown.tytyhelper.activity.DownListActivity;
+import com.mli.crown.tytyhelper.activity.MainActivity;
 import com.mli.crown.tytyhelper.tools.download.DownloadHelper;
 
 /**

@@ -1,4 +1,4 @@
-package com.mli.crown.tytyhelper.activity;
+package com.mli.crown.tytyhelper.fragment;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -28,14 +28,16 @@ import com.mli.crown.tytyhelper.tools.iResultListener;
 public class WebFragment extends Fragment {
 
     WebView mWebview;
+    private View mView;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
         final String url = PropertyLoader.getPropertyText(getActivity(), 1, "webpage:");
 
-        final View view = inflater.inflate(R.layout.fragment_web, container, false);
-        final SwipeRefreshLayout refreshLayout = Utils.findView(view, R.id.web_swiperefresh_container);
+        mView = inflater.inflate(R.layout.fragment_web, container, false);
+        final SwipeRefreshLayout refreshLayout = Utils.findView(mView, R.id.web_swiperefresh_container);
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -43,15 +45,7 @@ public class WebFragment extends Fragment {
             }
         });
 
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-                int state = Utils.getNetworkStatus(getActivity());
-                MyToast.shortShow(getActivity(), "state : " + state);
-//            }
-//        }).start();
-
-        mWebview = Utils.findView(view, R.id.web_webview);
+        mWebview = Utils.findView(mView, R.id.web_webview);
         mWebview.loadUrl(url);
 
         WebSettings settings = mWebview.getSettings();
@@ -79,7 +73,7 @@ public class WebFragment extends Fragment {
             }
         });
 
-        return view;
+        return mView;
     }
 
     private void preDownlaod(final String url, final String filename) {
@@ -107,7 +101,7 @@ public class WebFragment extends Fragment {
                                 }
                             }).show();
                 }else {
-                    MyToast.shortShow(getActivity(), "请检查网络状态");
+                    MyToast.shortShowCenter(getActivity(), "请检查网络状态");
                 }
             }
         });

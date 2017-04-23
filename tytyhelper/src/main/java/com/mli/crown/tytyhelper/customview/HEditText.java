@@ -17,6 +17,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
 import com.mli.crown.tytyhelper.R;
+import com.mli.crown.tytyhelper.tools.MyToast;
+
 /**
  * Created by mli on 2017/4/22.
  */
@@ -39,6 +41,14 @@ public class HEditText extends android.support.v7.widget.AppCompatEditText{
     @Override
     public InputConnection onCreateInputConnection(EditorInfo outAttrs) {
         return new InputConnectionListener(super.onCreateInputConnection(outAttrs), false);
+    }
+
+    @Override
+    public boolean onKeyPreIme(int keyCode, KeyEvent event) {
+        if(keyCode == KeyEvent.KEYCODE_BACK) {
+            clearFocus();
+        }
+        return super.onKeyPreIme(keyCode, event);
     }
 
     private void initView() {
@@ -161,9 +171,13 @@ public class HEditText extends android.support.v7.widget.AppCompatEditText{
 
         @Override
         public boolean finishComposingText() {
-            //键盘消失时失去焦点
-            clearFocus();
+
             return super.finishComposingText();
+        }
+
+        @Override
+        public boolean endBatchEdit() {
+            return super.endBatchEdit();
         }
     }
 

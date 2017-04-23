@@ -1,4 +1,4 @@
-package com.mli.crown.tytyhelper.activity;
+package com.mli.crown.tytyhelper.fragment;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -16,6 +16,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.mli.crown.tytyhelper.R;
+import com.mli.crown.tytyhelper.activity.LoginHelper;
 import com.mli.crown.tytyhelper.activity.adapter.base.AbsListViewDataHelper;
 import com.mli.crown.tytyhelper.activity.adapter.base.iAdapterItem;
 import com.mli.crown.tytyhelper.activity.adapter.base.iDataReceiver;

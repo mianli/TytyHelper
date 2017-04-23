@@ -1,7 +1,5 @@
-package com.mli.crown.tytyhelper.activity;
+package com.mli.crown.tytyhelper.fragment;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -14,9 +12,9 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.mli.crown.tytyhelper.R;
+import com.mli.crown.tytyhelper.activity.LoginHelper;
 import com.mli.crown.tytyhelper.bean.SimpleLoginInfo;
 import com.mli.crown.tytyhelper.customview.HEditText;
-import com.mli.crown.tytyhelper.tools.Config;
 import com.mli.crown.tytyhelper.tools.InfoManager;
 import com.mli.crown.tytyhelper.tools.MyToast;
 import com.mli.crown.tytyhelper.tools.Utils;
@@ -68,7 +66,7 @@ public class AddUserFragment extends Fragment {
 				}
 
 				if(TextUtils.isEmpty(username) || TextUtils.isEmpty(password)) {
-					MyToast.shortShow(getActivity(), "请输入用户名和密码");
+					MyToast.shortShowCenter(getActivity(), "请输入用户名和密码");
 				}else {
 					if(Utils.isAccessibilitySettingsEnable(getActivity())) {
 						InfoManager.saveInfo(getActivity(), new SimpleLoginInfo(username, password, desc));

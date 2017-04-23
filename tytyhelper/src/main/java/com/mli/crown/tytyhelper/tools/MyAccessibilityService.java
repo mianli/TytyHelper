@@ -56,7 +56,7 @@ public class MyAccessibilityService extends AccessibilityService {
 
 	@Override
 	public void onInterrupt() {
-		MyToast.shortShow(this, "辅助功能被中断,请重新开启或重启手机");
+		MyToast.shortShowCenter(this, "辅助功能被中断,请重新开启或重启手机");
 	}
 
 	private void backToMainWillLogint() {

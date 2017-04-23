@@ -51,12 +51,12 @@ public class DownloadService extends Service{
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		if(intent == null) {
-			MyToast.shortShow(this, "intent is null");
+			MyToast.shortShowCenter(this, "intent is null");
 			return killSelf(intent, flags, startId);
 		}
 		String url = intent.getStringExtra(DOWNLOAD_URL);
 		if(url == null) {
-			MyToast.shortShow(this, "链接获取失败");
+			MyToast.shortShowCenter(this, "链接获取失败");
 			return killSelf(intent, flags, startId);
 		}
 

@@ -9,7 +9,7 @@ import android.support.v7.app.NotificationCompat;
 import android.widget.RemoteViews;
 
 import com.mli.crown.tytyhelper.R;
-import com.mli.crown.tytyhelper.activity.DownloadFragment;
+import com.mli.crown.tytyhelper.fragment.DownloadFragment;
 import com.mli.crown.tytyhelper.tools.FileUtils;
 import com.mli.crown.tytyhelper.tools.MyToast;
 
@@ -108,15 +108,15 @@ public class DownloadHelper implements ProgressResponseBody.ProgressListener{
 					return;
 				}
 				startDownload();
-//				MyToast.shortShow(mContext, "开始下载");
+//				MyToast.shortShowCenter(mContext, "开始下载");
 			}else if(downloadBean.getBreakPoints() < downloadBean.getTotalLength()) {
 				//mContentLength = 0表示还没有下载过,比如已经已经存在同一的文件在相同的路径
 				//如果下载中途用户暂停并之后被用户删除文件数据，此时下载后的文件是不能使用的
 				continueDownload();//如果文件存在，继续下载
-//				MyToast.shortShow(mContext, "继续下载");
+//				MyToast.shortShowCenter(mContext, "继续下载");
 			}else {
 				if(!FileUtils.fileExist(mUrl)) {//被删除或者下载失败
-//					MyToast.shortShow(mContext, "文件已经被删除,已经开始重新下载");
+//					MyToast.shortShowCenter(mContext, "文件已经被删除,已经开始重新下载");
 					startDownload();
 				}else {
 					if(mDownLoadStatusListener != null) {
@@ -126,9 +126,9 @@ public class DownloadHelper implements ProgressResponseBody.ProgressListener{
 			}
 		}else if(progressDownloader.canPause()){
 			pauseDownload();
-//			MyToast.shortShow(mContext, "暂停下载");
+//			MyToast.shortShowCenter(mContext, "暂停下载");
 		}else {
-			MyToast.shortShow(mContext, "这是什么状态，——啊！逻辑错误啦~");
+			MyToast.shortShowCenter(mContext, "这是什么状态，——啊！逻辑错误啦~");
 		}
 	}
 

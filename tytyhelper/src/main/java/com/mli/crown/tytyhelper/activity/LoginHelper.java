@@ -44,7 +44,7 @@ public class LoginHelper {
 			}
 		}
 		if(mInfo == null) {
-			MyToast.shortShow(mContext, "没有找到该应用，或该应用还没有被安装");
+			MyToast.shortShowCenter(mContext, "没有找到该应用，或该应用还没有被安装");
 		}else {
 			try{
 				Intent launchIntent = new Intent();

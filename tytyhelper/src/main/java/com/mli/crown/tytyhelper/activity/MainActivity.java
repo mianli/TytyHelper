@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -15,6 +14,11 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.mli.crown.tytyhelper.R;
+import com.mli.crown.tytyhelper.fragment.AddUserFragment;
+import com.mli.crown.tytyhelper.fragment.DownloadFragment;
+import com.mli.crown.tytyhelper.fragment.FragmentHelper;
+import com.mli.crown.tytyhelper.fragment.HistoryFragment;
+import com.mli.crown.tytyhelper.fragment.WebFragment;
 import com.mli.crown.tytyhelper.tools.MyToast;
 import com.mli.crown.tytyhelper.tools.Utils;
 
@@ -31,6 +35,8 @@ public class MainActivity extends AppCompatActivity {
 	private AddUserFragment mAdUserFragment;
 	private WebFragment mWebFragment;
 	private DownloadFragment mDownloadFragment;
+
+	private FragmentHelper mFragmentHelper;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -75,9 +81,9 @@ public class MainActivity extends AppCompatActivity {
 //		mDrawlayout.setDrawerShadow(R.drawable.notication, GravityCompat.START);
 		mDrawerContainer = findViewById(R.id.main_drawer_container);
 		if(savedInstanceState == null) {
-			if(mHistoryFragment == null) {
-				showFragment(mHistoryFragment = new HistoryFragment());
-			}
+//			if(mHistoryFragment == null) {
+//				showFragment(mHistoryFragment = new HistoryFragment());
+//			}
 		}
 
 		mDrawerToggle = new ActionBarDrawerToggle(this, mDrawlayout, toolbar, 0, 0) {
@@ -104,6 +110,17 @@ public class MainActivity extends AppCompatActivity {
 		mDrawerToggle.syncState();
 		mDrawlayout.addDrawerListener(mDrawerToggle);
 
+		initFragments();
+	}
+
+	private void initFragments() {
+		mFragmentHelper = new FragmentHelper(R.id.main_content_frame);
+		mHistoryFragment = new HistoryFragment();
+		mAdUserFragment = new AddUserFragment();
+		mWebFragment = new WebFragment();
+		mDownloadFragment = new DownloadFragment();
+
+		showFragment(mHistoryFragment);
 	}
 
 	public void showDownload(View view) {
@@ -138,14 +155,15 @@ public class MainActivity extends AppCompatActivity {
 
 	public void checkAccessibilityEnable(View view) {
 		if(!Utils.isAccessibilitySettingsEnable(this)) {
-			MyToast.longShow(this, "请打开辅助功能");
+			MyToast.longShowCenter(this, "请打开辅助功能");
 			Utils.openAccessibilitySetting(this);
+		}else {
+			MyToast.shortShow(this, "辅助功能已打开");
 		}
 	}
 
 	public void showFragment(Fragment fragment) {
-		FragmentManager fragmentManager = getSupportFragmentManager();
-		fragmentManager.beginTransaction().replace(R.id.main_content_frame, fragment).commit();
+		mFragmentHelper.showFragment(getSupportFragmentManager().beginTransaction(), fragment);
 	}
 
 	public static class BroardCast extends BroadcastReceiver {
@@ -164,6 +182,7 @@ public class MainActivity extends AppCompatActivity {
 		super.onDestroy();
 	}
 
+	@SuppressWarnings("unchecked")
 	private <VIEW_TYPE> VIEW_TYPE findView(int id) {
 		return (VIEW_TYPE) findViewById(id);
 	}
