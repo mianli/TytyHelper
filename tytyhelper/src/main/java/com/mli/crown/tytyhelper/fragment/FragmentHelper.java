@@ -21,14 +21,19 @@ public class FragmentHelper {
     }
 
     public void showFragment(FragmentTransaction fragmentTransaction, Fragment fragment) {
+        if(fragment.isVisible()) {
+            return;
+        }
+
         for (Fragment fg : mFragments) {
             fragmentTransaction.hide(fg);
         }
 
-        if(!mFragments.contains(fragment)) {
+        if(!mFragments.contains(fragment) || !fragment.isAdded()) {
             mFragments.add(fragment);
             fragmentTransaction.add(mContainerId, fragment);
         }
+
         fragmentTransaction.show(fragment);
         fragmentTransaction.commit();
     }

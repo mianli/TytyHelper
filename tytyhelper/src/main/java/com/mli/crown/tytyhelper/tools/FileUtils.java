@@ -24,6 +24,21 @@ public class FileUtils {
 		return new File(destFileDir, FileUtils.getFilename(url));
 	}
 
+	public static boolean isExist(String filename) {
+		File file = getFile(filename);
+		return file.exists();
+	}
+
+	public static File getFile(String filename) {
+		String destFileDir = Environment.getExternalStorageDirectory().getAbsolutePath() + "/0TytyHelper";
+		File f = new File(destFileDir);
+		if(!f.exists()) {
+			f.mkdir();
+		}
+		File file = new File(destFileDir, filename);
+		return file;
+	}
+
 	public static synchronized boolean fileExist(String url) {
 		File file = FileUtils.getDownloadFile(url);
 		if(file.exists()) {

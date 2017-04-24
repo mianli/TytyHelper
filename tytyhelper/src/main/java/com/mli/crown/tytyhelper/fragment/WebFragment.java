@@ -1,7 +1,9 @@
 package com.mli.crown.tytyhelper.fragment;
 
 import android.app.Activity;
+import android.app.NotificationManager;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -12,6 +14,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.NotificationCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,10 +23,13 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.RemoteViews;
 import android.widget.TextView;
 
 import com.mli.crown.tytyhelper.R;
 import com.mli.crown.tytyhelper.tools.ApkInfoUtils;
+import com.mli.crown.tytyhelper.tools.DataManager;
+import com.mli.crown.tytyhelper.tools.FileUtils;
 import com.mli.crown.tytyhelper.tools.MyToast;
 import com.mli.crown.tytyhelper.tools.PropertyLoader;
 import com.mli.crown.tytyhelper.tools.Utils;
@@ -34,6 +40,7 @@ import com.mli.crown.tytyhelper.tools.download.iDownItemStatusListener;
 import com.mli.crown.tytyhelper.tools.download.iGetUpdateListListener;
 import com.mli.crown.tytyhelper.tools.iResultListener;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -42,10 +49,19 @@ import java.util.List;
 
 public class WebFragment extends Fragment implements iGetUpdateListListener {
 
+    private static final String FILE_NAME = "downloadApk";
+    private static final String APK_NAME = "apk";
+
     private DownloadService.DownloadBind mBinder;
     private WebView mWebview;
     private View mView;
     private Handler mHandler;
+
+    private RemoteViews mRemoteViews;
+
+    private NotificationCompat.Builder mBuilder;
+
+    private long mPreSize;
 
     private ViewHolder mViewHolder;
 
@@ -105,6 +121,19 @@ public class WebFragment extends Fragment implements iGetUpdateListListener {
         mViewHolder.mProgressBar = Utils.findView(mView, R.id.web_progressbar);
         mViewHolder.mControlBtn = Utils.findView(mView, R.id.web_control_btn);
 
+        final String filename = DataManager.getValue(getActivity(), FILE_NAME, APK_NAME);
+        if(filename != null) {
+            mViewHolder.mProgressBar.setProgress(100);
+            mViewHolder.mFileNameTv.setText(filename + " 已下载");
+            mViewHolder.mControlBtn.setText("安装");
+            mViewHolder.mControlBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ApkInfoUtils.install(getActivity(), filename);
+                }
+            });
+        }
+
         Intent downIntent = new Intent(getActivity(), DownloadService.class);
         getActivity().bindService(downIntent, mConnection, Activity.BIND_AUTO_CREATE);
 
@@ -124,7 +153,7 @@ public class WebFragment extends Fragment implements iGetUpdateListListener {
                             setPositiveButton("确定", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    startDownlaod(url);
+                                    startDownlaod(url, filename);
                                 }
                             }).show();
                 }else if(result == 1){
@@ -134,7 +163,7 @@ public class WebFragment extends Fragment implements iGetUpdateListListener {
                             setPositiveButton("下载", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    startDownlaod(url);
+                                    startDownlaod(url, filename);
                                 }
                             }).show();
                 }else {
@@ -144,10 +173,18 @@ public class WebFragment extends Fragment implements iGetUpdateListListener {
         });
     }
 
-    private void startDownlaod(String url) {
+    private void startDownlaod(String url, String filename) {
+
+        File file = FileUtils.getFile(filename);
+        if(file != null) {
+            file.delete();//重新下载
+        }
+
         Intent downIntent = new Intent(getActivity(), DownloadService.class);
         downIntent.putExtra(DownloadService.DOWNLOAD_URL, url);
         getActivity().startService(downIntent);
+
+        sendNotification(filename);
     }
 
     private void checkNetworkState(iResultListener<Integer> listener) {
@@ -194,11 +231,15 @@ public class WebFragment extends Fragment implements iGetUpdateListListener {
                     mHandler.post(new Runnable() {
                         @Override
                         public void run() {
-
+                            updateNotification(mStatus);
                             int percent = (int) (1.f * status.totalSize / status.contentSize * 100);
+
                             if(percent == 100) {
+                                DataManager.saveValue(getActivity(), FILE_NAME, APK_NAME, status.fileName);
+
                                 mViewHolder.mFileNameTv.setText(status.fileName + "下载已完成");
                                 mViewHolder.mSpeedTv.setText("");
+                                mViewHolder.mProgressBar.setProgress(percent);
                                 mViewHolder.mControlBtn.setText("安装");
                                 mViewHolder.mControlBtn.setOnClickListener(new View.OnClickListener() {
                                     @Override
@@ -237,4 +278,53 @@ public class WebFragment extends Fragment implements iGetUpdateListListener {
         getActivity().unbindService(mConnection);
         super.onDestroy();
     }
+
+    private void sendNotification(String filename) {
+        mBuilder = new NotificationCompat.Builder(getActivity());
+        mBuilder.setSmallIcon(R.drawable.ic_launcher)
+                .setContentTitle("");
+        mRemoteViews = new RemoteViews(getActivity().getPackageName(), R.layout.notification_download);
+        mRemoteViews.setImageViewResource(R.id.notification_download_iamgeview, R.drawable.notication);
+        mRemoteViews.setProgressBar(R.id.notification_download_progressbar, 100, 0, false);
+        mRemoteViews.setTextViewText(R.id.notification_download_filename, filename);
+        mRemoteViews.setTextViewText(R.id.notification_download_speed, "下载速度");
+        mBuilder.setContent(mRemoteViews);
+
+        NotificationManager manager = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+        manager.notify(0, mBuilder.build());
+    }
+
+    private void updateNotification(DownloadStatus status) {
+
+                int percent = (int) (1.f * status.totalSize / status.contentSize * 100);
+                if (percent >= 100) {
+
+                    DataManager.saveValue(getActivity(), FILE_NAME, APK_NAME, status.fileName);
+
+                    mRemoteViews.setTextViewText(R.id.notification_download_speed, "下载已经完成");
+                    mRemoteViews.setTextViewText(R.id.notification_download_filename, status.fileName);
+                } else {
+
+                    int speed = (int) ((status.totalSize - mPreSize) / 1024);
+                    if(speed < 0) {
+                        speed = 0;
+                    }
+
+                    float speedM = 0;
+                    String speedText;
+                    if (speed > 1024) {
+                        speedM = speed / 1024.0f;
+                        speedText = String.format("下载速度：%.1fM/s", speedM);
+                    } else {
+                        speedText = String.format("下载速度：%dk/s", speed);
+                    }
+                    mPreSize = status.totalSize;
+                    mRemoteViews.setTextViewText(R.id.notification_download_filename, status.fileName);
+                    mRemoteViews.setTextViewText(R.id.notification_download_speed, speedText);
+                }
+                mRemoteViews.setProgressBar(R.id.notification_download_progressbar, 100, percent, false);
+                NotificationManager manager = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+                manager.notify(0, mBuilder.build());
+    }
+
 }

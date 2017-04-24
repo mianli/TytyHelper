@@ -67,4 +67,11 @@ public class ApkInfoUtils {
 		}
 	}
 
+	public static void install(Context context, String filename) {
+		File file = FileUtils.getFile(filename);
+		Intent intent = new Intent(Intent.ACTION_VIEW);
+		intent.setDataAndType(Uri.fromFile(file), "application/vnd.android.package-archive");
+		context.startActivity(intent);
+	}
+
 }

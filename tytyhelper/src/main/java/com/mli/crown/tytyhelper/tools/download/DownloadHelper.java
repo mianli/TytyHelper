@@ -217,8 +217,10 @@ public class DownloadHelper implements ProgressResponseBody.ProgressListener{
 							if (speed > 1024) {
 								speedM = speed / 1024.0f;
 								speedText = String.format("%.1fM/s", speedM);
-							} else {
+							} else if(speed > 0){
 								speedText = String.format("%dk/s", speed);
+							}else {
+								speedText = "0k/s";
 							}
 							preSize = DownloadHelper.this.mTotalBytes;
 							mDownLoadStatusListener.update(getFileName(),
