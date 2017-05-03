@@ -45,14 +45,22 @@
 	<RelativeLayout
 		android:layout_width="match_parent"
 		android:layout_height="50dp"
-		android:paddingLeft="50dp"
-		android:paddingRight="50dp">
+		android:paddingLeft="10dp"
+		android:paddingRight="10dp">
 		<Button
 			android:id="@+id/adduser_clear_btn"
 			android:layout_width="100dp"
 			android:layout_height="50dp"
 			android:background="#55adad"
 			android:text="清空"/>
+
+		<Button
+			android:id="@+id/adduser_save_password_btn"
+			android:layout_width="100dp"
+			android:layout_height="50dp"
+			android:background="#55adad"
+			android:layout_centerInParent="true"
+			android:text="保存密码"/>
 
 		<Button
 			android:id="@+id/adduser_add_btn"

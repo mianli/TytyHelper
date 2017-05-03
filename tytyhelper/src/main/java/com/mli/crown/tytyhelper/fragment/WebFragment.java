@@ -27,6 +27,7 @@ import android.widget.RemoteViews;
 import android.widget.TextView;
 
 import com.mli.crown.tytyhelper.R;
+import com.mli.crown.tytyhelper.activity.MainActivity;
 import com.mli.crown.tytyhelper.tools.ApkInfoUtils;
 import com.mli.crown.tytyhelper.tools.DataManager;
 import com.mli.crown.tytyhelper.tools.FileUtils;
@@ -115,6 +116,9 @@ public class WebFragment extends Fragment implements iGetUpdateListListener {
             }
         });
 
+        // FIXME: 2017/4/24
+        DownloadFragment.mDownloadActivity = getActivity();
+
         mViewHolder = new ViewHolder();
         mViewHolder.mFileNameTv = Utils.findView(mView, R.id.web_filename);
         mViewHolder.mSpeedTv = Utils.findView(mView, R.id.web_speed);
@@ -175,10 +179,10 @@ public class WebFragment extends Fragment implements iGetUpdateListListener {
 
     private void startDownlaod(String url, String filename) {
 
-        File file = FileUtils.getFile(filename);
-        if(file != null) {
-            file.delete();//重新下载
-        }
+//        File file = FileUtils.getFile(filename);
+//        if(file != null) {
+//            file.delete();//重新下载
+//        }
 
         Intent downIntent = new Intent(getActivity(), DownloadService.class);
         downIntent.putExtra(DownloadService.DOWNLOAD_URL, url);
@@ -303,6 +307,10 @@ public class WebFragment extends Fragment implements iGetUpdateListListener {
 
                     mRemoteViews.setTextViewText(R.id.notification_download_speed, "下载已经完成");
                     mRemoteViews.setTextViewText(R.id.notification_download_filename, status.fileName);
+
+                    NotificationManager manager = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+                    manager.cancel(0);
+
                 } else {
 
                     int speed = (int) ((status.totalSize - mPreSize) / 1024);
@@ -321,10 +329,11 @@ public class WebFragment extends Fragment implements iGetUpdateListListener {
                     mPreSize = status.totalSize;
                     mRemoteViews.setTextViewText(R.id.notification_download_filename, status.fileName);
                     mRemoteViews.setTextViewText(R.id.notification_download_speed, speedText);
+
+                    mRemoteViews.setProgressBar(R.id.notification_download_progressbar, 100, percent, false);
+                    NotificationManager manager = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+                    manager.notify(0, mBuilder.build());
                 }
-                mRemoteViews.setProgressBar(R.id.notification_download_progressbar, 100, percent, false);
-                NotificationManager manager = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
-                manager.notify(0, mBuilder.build());
     }
 
 }

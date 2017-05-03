@@ -15,6 +15,7 @@ import com.mli.crown.tytyhelper.R;
 import com.mli.crown.tytyhelper.activity.LoginHelper;
 import com.mli.crown.tytyhelper.bean.SimpleLoginInfo;
 import com.mli.crown.tytyhelper.customview.HEditText;
+import com.mli.crown.tytyhelper.tools.DataManager;
 import com.mli.crown.tytyhelper.tools.InfoManager;
 import com.mli.crown.tytyhelper.tools.MyToast;
 import com.mli.crown.tytyhelper.tools.Utils;
@@ -23,6 +24,9 @@ import com.mli.crown.tytyhelper.tools.Utils;
  * Created by crown on 2017/3/21.
  */
 public class AddUserFragment extends Fragment {
+
+	private static final String FILE_NAME = "PASSWORD";
+	private static final String PASSWORD = "password";
 
 	private HEditText mUsernameEdt, mPasswordEdt;
 
@@ -42,6 +46,39 @@ public class AddUserFragment extends Fragment {
 				descEdt.setText("");
 			}
 		});
+
+		final Button passwordBtn = (Button) view.findViewById(R.id.adduser_save_password_btn);
+		final String password = DataManager.getValue(getActivity(), FILE_NAME, PASSWORD);
+		if(password != null) {
+			passwordBtn.setText("使用密码");
+			passwordBtn.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					mPasswordEdt.setText(password);
+				}
+			});
+		}else {
+			passwordBtn.setText("保存密码");
+			passwordBtn.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					if(!TextUtils.isEmpty(mPasswordEdt.getText())) {
+						DataManager.saveValue(getActivity(), FILE_NAME, PASSWORD, mPasswordEdt.getText().toString());
+						passwordBtn.setText("使用密码");
+						passwordBtn.setOnClickListener(new View.OnClickListener() {
+							@Override
+							public void onClick(View v) {
+								final String password = DataManager.getValue(getActivity(), FILE_NAME, PASSWORD);
+								mPasswordEdt.setText(password);
+							}
+						});
+					}else {
+						MyToast.shortShowCenter(getActivity(), "没有输入密码");
+					}
+				}
+			});
+		}
+
 		Button loginBtn = (Button) view.findViewById(R.id.adduser_add_btn);
 		loginBtn.setOnClickListener(new View.OnClickListener() {
 			@Override

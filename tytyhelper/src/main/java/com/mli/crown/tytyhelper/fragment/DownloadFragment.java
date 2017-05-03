@@ -1,5 +1,6 @@
 package com.mli.crown.tytyhelper.fragment;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -18,7 +19,7 @@ import com.mli.crown.tytyhelper.tools.download.DownloadHelper;
  */
 public class DownloadFragment extends Fragment {
 
-	public static MainActivity mDownloadActivity;
+	public static Activity mDownloadActivity;
 
 	@Nullable
 	@Override
@@ -31,7 +32,7 @@ public class DownloadFragment extends Fragment {
 				download();
 			}
 		});
-		mDownloadActivity = (MainActivity) getActivity();
+		mDownloadActivity = getActivity();
 		return view;
 	}
 

@@ -53,7 +53,7 @@ public class DownloadHelper implements ProgressResponseBody.ProgressListener{
 
 	private Timer mTimer;
 
-	private int mNotificationid = 100;// FIXME: 2017/3/26 用户的通知数超过这个数字应该会出现问题,概率小暂不处理
+	private int mNotificationid = 100;// FIXME: 2017/3/26 用户的通知数超过这个数字应该会出现问题,暂不处理
 
 	private DownloadDbHelper mDownloadDbHelper;
 
@@ -119,9 +119,10 @@ public class DownloadHelper implements ProgressResponseBody.ProgressListener{
 //					MyToast.shortShowCenter(mContext, "文件已经被删除,已经开始重新下载");
 					startDownload();
 				}else {
-					if(mDownLoadStatusListener != null) {
-						mDownLoadStatusListener.update(getFileName(), -1, -1, null, true);
-					}
+					showReDownloadAlert();
+//					if(mDownLoadStatusListener != null) {
+//						mDownLoadStatusListener.update(getFileName(), -1, -1, null, true);
+//					}
 				}
 			}
 		}else if(progressDownloader.canPause()){

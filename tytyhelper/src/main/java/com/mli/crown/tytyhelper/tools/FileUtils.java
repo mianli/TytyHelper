@@ -39,7 +39,7 @@ public class FileUtils {
 		return file;
 	}
 
-	public static synchronized boolean fileExist(String url) {
+	public static boolean fileExist(String url) {
 		File file = FileUtils.getDownloadFile(url);
 		if(file.exists()) {
 			return true;

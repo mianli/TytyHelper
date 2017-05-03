@@ -171,6 +171,10 @@ public class MyAccessibilityService extends AccessibilityService {
 
 	private AccessibilityNodeInfo getNodeInfo(String key, boolean isId) {
 		AccessibilityNodeInfo accessibilityNodeInfo = getRootInActiveWindow();
+		if(accessibilityNodeInfo == null) {
+			return null;
+		}
+
 		List<AccessibilityNodeInfo> nodeInfos =
 				isId ? accessibilityNodeInfo.
 				findAccessibilityNodeInfosByViewId(PACKAGE_ID + key) :
