@@ -24,8 +24,8 @@ public class FragmentHelper {
         this.mContainerId = containerId;
     }
 
-    public void putFragment(Fragment fragment, Class<?> cls) {
-        mFragments.put(cls.getSimpleName(), fragment);
+    public void putFragment(Fragment fragment, String tag) {
+        mFragments.put(tag, fragment);
     }
 
     public Fragment getFragmentByTag(String tag) {
@@ -45,7 +45,7 @@ public class FragmentHelper {
 
         if(!mFragments.containsValue(fragment) || !fragment.isAdded()) {
             mFragments.put(tag, fragment);
-            fragmentTransaction.add(mContainerId, fragment);
+            fragmentTransaction.add(mContainerId, fragment, tag);
         }
 
         fragmentTransaction.show(fragment);

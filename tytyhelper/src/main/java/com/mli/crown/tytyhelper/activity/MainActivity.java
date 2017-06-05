@@ -26,9 +26,8 @@ import com.mli.crown.tytyhelper.tools.Utils;
 
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends FragmentActivity {
 
-	private static final String CURRENT_SHOWING_TAG = "currentShowingTag";
 	private DrawerLayout mDrawlayout;
 	private ActionBarDrawerToggle mDrawerToggle;
 	private View mDrawerContainer;
@@ -40,13 +39,6 @@ public class MainActivity extends AppCompatActivity {
 	private AddUserFragment mAdUserFragment;
 	private WebFragment mWebFragment;
 	private DownloadFragment mDownloadFragment;
-
-	private FragmentHelper mFragmentHelper;
-
-	@Override
-	protected void onRestoreInstanceState(Bundle savedInstanceState) {
-		super.onRestoreInstanceState(savedInstanceState);
-	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -90,11 +82,6 @@ public class MainActivity extends AppCompatActivity {
 		mDrawlayout = (DrawerLayout) findViewById(R.id.main_drawlayout);
 //		mDrawlayout.setDrawerShadow(R.drawable.notication, GravityCompat.START);
 		mDrawerContainer = findViewById(R.id.main_drawer_container);
-		if(savedInstanceState == null) {
-//			if(mHistoryFragment == null) {
-//				showFragment(mHistoryFragment = new HistoryFragment());
-//			}
-		}
 
 		mDrawerToggle = new ActionBarDrawerToggle(this, mDrawlayout, toolbar, 0, 0) {
 			@Override
@@ -120,79 +107,37 @@ public class MainActivity extends AppCompatActivity {
 		mDrawerToggle.syncState();
 		mDrawlayout.addDrawerListener(mDrawerToggle);
 
+		initFragmentHelper(R.id.main_content_frame);
 		if(savedInstanceState == null) {
-			initFragments();
+			mHistoryFragment = (HistoryFragment) showFragment(mHistoryFragment, HistoryFragment.class);
 		}else {
-			mFragmentHelper = new FragmentHelper(R.id.main_content_frame);
-			List<Fragment> fragments = getSupportFragmentManager().getFragments();
-			if(fragments != null) {
-				for (Fragment fragment : fragments) {
-					if(fragment instanceof HistoryFragment) {
-						mHistoryFragment = (HistoryFragment) fragment;
-					}else if(fragment instanceof AddUserFragment){
-						mAdUserFragment = (AddUserFragment) fragment;
-					}else if(fragment instanceof WebFragment) {
-						mWebFragment = (WebFragment) fragment;
-					}else if(fragment instanceof DownloadFragment) {
-						mDownloadFragment = (DownloadFragment) fragment;
-					}
-				}
-			}
-			mFragmentHelper.putFragment(mHistoryFragment, HistoryFragment.class);
-			mFragmentHelper.putFragment(mAdUserFragment, AddUserFragment.class);
-			mFragmentHelper.putFragment(mWebFragment, WebFragment.class);
-			mFragmentHelper.putFragment(mDownloadFragment, DownloadFragment.class);
-			String currentShowingTag = savedInstanceState.getString(CURRENT_SHOWING_TAG);
-			if(currentShowingTag != null) {
-				showFragment(mFragmentHelper.getFragmentByTag(currentShowingTag),
-						currentShowingTag);
-			}else {
-				showFragment(mHistoryFragment, mHistoryFragment.getClass().getSimpleName());
-			}
+			mHistoryFragment = restoreFragment(HistoryFragment.class.getSimpleName());
+			mAdUserFragment = restoreFragment(AddUserFragment.class.getSimpleName());
+			mWebFragment = restoreFragment(WebFragment.class.getSimpleName());
+			mDownloadFragment = restoreFragment(DownloadFragment.class.getSimpleName());
+			showFragment(getCurrentShowingFragment(savedInstanceState), getCurrentShowingTag(savedInstanceState));
 		}
 
-	}
-
-	private void initFragments() {
-		mFragmentHelper = new FragmentHelper(R.id.main_content_frame);
-		mHistoryFragment = new HistoryFragment();
-		mAdUserFragment = new AddUserFragment();
-		mWebFragment = new WebFragment();
-		mDownloadFragment = new DownloadFragment();
-
-		showFragment(mHistoryFragment, HistoryFragment.class.getSimpleName());
 	}
 
 	public void showDownload(View view) {
-		showFragment(mDownloadFragment, DownloadFragment.class);
+		mDrawlayout.closeDrawer(mDrawerContainer);
+		mDownloadFragment = (DownloadFragment) showFragment(mDownloadFragment, DownloadFragment.class);
 	}
 
 	public void showAddUser(View view) {
-		showFragment(mAdUserFragment, AddUserFragment.class);
+		mDrawlayout.closeDrawer(mDrawerContainer);
+		mAdUserFragment = (AddUserFragment) showFragment(mAdUserFragment, AddUserFragment.class);
 	}
 
 	public void showHistory(View view) {
-		showFragment(mHistoryFragment, HistoryFragment.class);
+		mDrawlayout.closeDrawer(mDrawerContainer);
+		mHistoryFragment = (HistoryFragment) showFragment(mHistoryFragment, HistoryFragment.class);
 	}
 
 	public void showWebpage(View view) {
-		showFragment(mWebFragment, WebFragment.class);
-	}
-
-	public void showFragment(Fragment fragment, Class cls) {
-		if(fragment == null) {
-			try {
-				fragment = (Fragment) cls.newInstance();
-			} catch (InstantiationException e) {
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-			}
-		}
-		if(fragment != null) {
-			showFragment(fragment, cls.getSimpleName());
-			mDrawlayout.closeDrawer(mDrawerContainer);
-		}
+		mDrawlayout.closeDrawer(mDrawerContainer);
+		mWebFragment = (WebFragment) showFragment(mWebFragment, WebFragment.class);
 	}
 
 	public void checkAccessibilityEnable(View view) {
@@ -204,27 +149,11 @@ public class MainActivity extends AppCompatActivity {
 		}
 	}
 
-	public void showFragment(Fragment fragment, @NonNull String tag) {
-		mFragmentHelper.showFragment(getSupportFragmentManager().beginTransaction(), fragment, tag);
-	}
-
-	@Override
-	protected void onSaveInstanceState(Bundle outState) {
-		outState.putString(CURRENT_SHOWING_TAG, mFragmentHelper.getShowingTag());
-		super.onSaveInstanceState(outState);
-	}
-
 	@Override
 	protected void onDestroy() {
 		mDrawlayout.removeDrawerListener(mDrawerToggle);
 		super.onDestroy();
 	}
-
-	@SuppressWarnings("unchecked")
-	private <VIEW_TYPE> VIEW_TYPE findView(int id) {
-		return (VIEW_TYPE) findViewById(id);
-	}
-
 
 	public static class BroardCast extends BroadcastReceiver {
 
