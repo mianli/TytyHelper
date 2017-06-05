@@ -10,4 +10,8 @@ public class Log {
 		android.util.Log.i(LTAG, log);
 	}
 
+	public static void i(int log) {
+		android.util.Log.i(LTAG, String.format("%s", log));
+	}
+
 }

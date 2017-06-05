@@ -50,6 +50,7 @@ import java.util.List;
 
 public class WebFragment extends Fragment implements iGetUpdateListListener {
 
+    public static final String FRAGMENT_TAG = "WebFragment";
     private static final String FILE_NAME = "downloadApk";
     private static final String APK_NAME = "apk";
 
@@ -81,6 +82,7 @@ public class WebFragment extends Fragment implements iGetUpdateListListener {
 
         mView = inflater.inflate(R.layout.fragment_web, container, false);
         final SwipeRefreshLayout refreshLayout = Utils.findView(mView, R.id.web_swiperefresh_container);
+        refreshLayout.setColorSchemeColors(getResources().getColor(R.color.theme_color));
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {

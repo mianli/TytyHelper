@@ -3,6 +3,7 @@ package com.mli.crown.tytyhelper.activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
@@ -19,11 +20,15 @@ import com.mli.crown.tytyhelper.fragment.DownloadFragment;
 import com.mli.crown.tytyhelper.fragment.FragmentHelper;
 import com.mli.crown.tytyhelper.fragment.HistoryFragment;
 import com.mli.crown.tytyhelper.fragment.WebFragment;
+import com.mli.crown.tytyhelper.tools.Log;
 import com.mli.crown.tytyhelper.tools.MyToast;
 import com.mli.crown.tytyhelper.tools.Utils;
 
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
 
+	private static final String CURRENT_SHOWING_TAG = "currentShowingTag";
 	private DrawerLayout mDrawlayout;
 	private ActionBarDrawerToggle mDrawerToggle;
 	private View mDrawerContainer;
@@ -37,6 +42,11 @@ public class MainActivity extends AppCompatActivity {
 	private DownloadFragment mDownloadFragment;
 
 	private FragmentHelper mFragmentHelper;
+
+	@Override
+	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+		super.onRestoreInstanceState(savedInstanceState);
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -101,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
 
 				if(mHistoryFragment != null && mHistoryFragment.isVisible()) {
 					toolbar.getMenu().clear();
-						toolbar.inflateMenu(R.menu.menu_main);
+					toolbar.inflateMenu(R.menu.menu_main);
 				}else if(toolbar.getMenu() != null) {
 					toolbar.getMenu().clear();
 				}
@@ -110,7 +120,37 @@ public class MainActivity extends AppCompatActivity {
 		mDrawerToggle.syncState();
 		mDrawlayout.addDrawerListener(mDrawerToggle);
 
-		initFragments();
+		if(savedInstanceState == null) {
+			initFragments();
+		}else {
+			mFragmentHelper = new FragmentHelper(R.id.main_content_frame);
+			List<Fragment> fragments = getSupportFragmentManager().getFragments();
+			if(fragments != null) {
+				for (Fragment fragment : fragments) {
+					if(fragment instanceof HistoryFragment) {
+						mHistoryFragment = (HistoryFragment) fragment;
+					}else if(fragment instanceof AddUserFragment){
+						mAdUserFragment = (AddUserFragment) fragment;
+					}else if(fragment instanceof WebFragment) {
+						mWebFragment = (WebFragment) fragment;
+					}else if(fragment instanceof DownloadFragment) {
+						mDownloadFragment = (DownloadFragment) fragment;
+					}
+				}
+			}
+			mFragmentHelper.putFragment(mHistoryFragment, HistoryFragment.class);
+			mFragmentHelper.putFragment(mAdUserFragment, AddUserFragment.class);
+			mFragmentHelper.putFragment(mWebFragment, WebFragment.class);
+			mFragmentHelper.putFragment(mDownloadFragment, DownloadFragment.class);
+			String currentShowingTag = savedInstanceState.getString(CURRENT_SHOWING_TAG);
+			if(currentShowingTag != null) {
+				showFragment(mFragmentHelper.getFragmentByTag(currentShowingTag),
+						currentShowingTag);
+			}else {
+				showFragment(mHistoryFragment, mHistoryFragment.getClass().getSimpleName());
+			}
+		}
+
 	}
 
 	private void initFragments() {
@@ -120,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
 		mWebFragment = new WebFragment();
 		mDownloadFragment = new DownloadFragment();
 
-		showFragment(mHistoryFragment);
+		showFragment(mHistoryFragment, HistoryFragment.class.getSimpleName());
 	}
 
 	public void showDownload(View view) {
@@ -149,8 +189,10 @@ public class MainActivity extends AppCompatActivity {
 				e.printStackTrace();
 			}
 		}
-		showFragment(fragment);
-		mDrawlayout.closeDrawer(mDrawerContainer);
+		if(fragment != null) {
+			showFragment(fragment, cls.getSimpleName());
+			mDrawlayout.closeDrawer(mDrawerContainer);
+		}
 	}
 
 	public void checkAccessibilityEnable(View view) {
@@ -162,18 +204,14 @@ public class MainActivity extends AppCompatActivity {
 		}
 	}
 
-	public void showFragment(Fragment fragment) {
-		mFragmentHelper.showFragment(getSupportFragmentManager().beginTransaction(), fragment);
+	public void showFragment(Fragment fragment, @NonNull String tag) {
+		mFragmentHelper.showFragment(getSupportFragmentManager().beginTransaction(), fragment, tag);
 	}
 
-	public static class BroardCast extends BroadcastReceiver {
-
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			if(intent.getAction().equals("android.intent.action.PACKAGE_ADDED")) {
-
-			}
-		}
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		outState.putString(CURRENT_SHOWING_TAG, mFragmentHelper.getShowingTag());
+		super.onSaveInstanceState(outState);
 	}
 
 	@Override
@@ -185,6 +223,17 @@ public class MainActivity extends AppCompatActivity {
 	@SuppressWarnings("unchecked")
 	private <VIEW_TYPE> VIEW_TYPE findView(int id) {
 		return (VIEW_TYPE) findViewById(id);
+	}
+
+
+	public static class BroardCast extends BroadcastReceiver {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if(intent.getAction().equals("android.intent.action.PACKAGE_ADDED")) {
+
+			}
+		}
 	}
 
 }

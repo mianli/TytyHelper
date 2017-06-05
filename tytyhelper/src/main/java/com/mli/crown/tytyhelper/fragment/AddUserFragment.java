@@ -25,6 +25,7 @@ import com.mli.crown.tytyhelper.tools.Utils;
  */
 public class AddUserFragment extends Fragment {
 
+	public static final String FRAGMENT_TAG = "addUserFragment";
 	private static final String FILE_NAME = "PASSWORD";
 	private static final String PASSWORD = "password";
 

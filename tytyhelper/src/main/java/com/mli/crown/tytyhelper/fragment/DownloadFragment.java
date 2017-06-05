@@ -19,6 +19,7 @@ import com.mli.crown.tytyhelper.tools.download.DownloadHelper;
  */
 public class DownloadFragment extends Fragment {
 
+	public static final String FRAGMENT_TAG = "DownloadFragment";
 	public static Activity mDownloadActivity;
 
 	@Nullable

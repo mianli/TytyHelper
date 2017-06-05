@@ -4,16 +4,11 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.mli.crown.tytyhelper.R;
 import com.mli.crown.tytyhelper.activity.LoginHelper;
@@ -23,14 +18,10 @@ import com.mli.crown.tytyhelper.activity.adapter.base.iDataReceiver;
 import com.mli.crown.tytyhelper.activity.adapter.base.iReceiverData;
 import com.mli.crown.tytyhelper.activity.adapter.cell.HistoryCell;
 import com.mli.crown.tytyhelper.bean.LoginInfo;
-import com.mli.crown.tytyhelper.bean.SimpleLoginInfo;
 import com.mli.crown.tytyhelper.customview.SwipeRefreshListView;
 import com.mli.crown.tytyhelper.tools.EntryDbHelper;
 import com.mli.crown.tytyhelper.tools.InfoManager;
-import com.mli.crown.tytyhelper.tools.MyToast;
 import com.mli.crown.tytyhelper.tools.Utils;
-
-import java.util.List;
 
 /**
  * Created by crown on 2017/3/22.
