@@ -6,66 +6,88 @@
 	android:focusable="true"
 	android:focusableInTouchMode="true">
 
-	<com.mli.crown.tytyhelper.customview.HEditText
-		android:id="@+id/adduser_username_etv"
-		android:layout_marginLeft="20dp"
-		android:layout_marginRight="20dp"
+	<LinearLayout
+		android:orientation="vertical"
 		android:layout_width="match_parent"
-		android:layout_height="60dp"
-		android:nextFocusForward="@+id/adduser_password_etv"
-		android:imeOptions="actionNext"
-		android:maxLines="1"
-		android:inputType="text"
-		android:hint="输入用户"/>
-
-	<com.mli.crown.tytyhelper.customview.HEditText
-		android:id="@+id/adduser_password_etv"
-		android:layout_marginLeft="20dp"
+		android:layout_height="wrap_content"
 		android:layout_marginRight="20dp"
-		android:layout_width="match_parent"
-		android:layout_height="60dp"
-		android:nextFocusForward="@+id/adduser_desc_etv"
-		android:imeOptions="actionNext"
-		android:maxLines="1"
-		android:inputType="text"
-		android:hint="输入密码"/>
-
-	<com.mli.crown.tytyhelper.customview.HEditText
-		android:id="@+id/adduser_desc_etv"
-		android:layout_width="match_parent"
-		android:layout_height="60dp"
 		android:layout_marginLeft="20dp"
-		android:layout_marginRight="20dp"
-		android:imeOptions="actionDone"
-		android:nextFocusForward="@+id/adduser_clear_btn"
-		android:maxLines="1"
-		android:inputType="text"
-		android:hint="输入描述"/>
+		android:layout_marginTop="10dp"
+		android:background="@drawable/radius_bg">
+		<com.mli.crown.tytyhelper.customview.HEditText
+			android:id="@+id/adduser_username_etv"
+			android:layout_width="match_parent"
+			android:layout_height="50dp"
+			android:nextFocusForward="@+id/adduser_password_etv"
+			android:imeOptions="actionNext"
+			android:maxLines="1"
+			android:background="@color/transparent"
+			android:inputType="text"
+			android:paddingLeft="2dp"
+			android:hint="输入用户"/>
 
+		<View
+			android:layout_width="match_parent"
+			android:layout_height="1dp"
+			android:background="@color/theme_color">
+		</View>
+
+		<com.mli.crown.tytyhelper.customview.HEditText
+			android:id="@+id/adduser_password_etv"
+			android:layout_width="match_parent"
+			android:layout_height="50dp"
+			android:nextFocusForward="@+id/adduser_desc_etv"
+			android:imeOptions="actionNext"
+			android:maxLines="1"
+			android:background="@color/transparent"
+			android:inputType="text"
+			android:paddingLeft="2dp"
+			android:hint="输入密码"/>
+
+		<View
+			android:layout_width="match_parent"
+			android:layout_height="1dp"
+			android:background="@color/theme_color">
+		</View>
+
+		<com.mli.crown.tytyhelper.customview.HEditText
+			android:id="@+id/adduser_desc_etv"
+			android:layout_width="match_parent"
+			android:layout_height="50dp"
+			android:imeOptions="actionDone"
+			android:nextFocusForward="@+id/adduser_clear_btn"
+			android:maxLines="1"
+			android:inputType="text"
+			android:paddingLeft="2dp"
+			android:background="@color/transparent"
+			android:hint="输入描述"/>
+
+	</LinearLayout>
 	<RelativeLayout
 		android:layout_width="match_parent"
 		android:layout_height="50dp"
-		android:paddingLeft="10dp"
-		android:paddingRight="10dp">
+		android:layout_marginTop="5dp"
+		android:paddingLeft="20dp"
+		android:paddingRight="20dp">
 		<Button
 			android:id="@+id/adduser_clear_btn"
-			android:layout_width="100dp"
-			android:layout_height="50dp"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
 			style="@style/btn_style"
 			android:text="清空"/>
 
 		<Button
 			android:id="@+id/adduser_save_password_btn"
-			android:layout_width="100dp"
-			android:layout_height="50dp"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
 			style="@style/btn_style"
 			android:layout_centerInParent="true"
 			android:text="保存密码"/>
 
 		<Button
 			android:id="@+id/adduser_add_btn"
-			android:layout_width="100dp"
-			android:layout_height="50dp"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
 			style="@style/btn_style"
 			android:layout_alignParentRight="true"
 			android:text="确定"/>

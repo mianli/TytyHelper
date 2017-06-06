@@ -8,5 +8,6 @@
     <color name="white_high_alpha">#55ffffff</color>
     <color name="black">#ff000000</color>
     <color name="black_half_alpha">#b1000000</color>
+    <color name="transparent">#00000000</color>
 
 </resources>

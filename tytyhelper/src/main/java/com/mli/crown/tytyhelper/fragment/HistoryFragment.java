@@ -34,7 +34,6 @@ public class HistoryFragment extends Fragment implements iAdapterItem<LoginInfo>
 	private EntryDbHelper mDbHelper;
 
 	private AbsListViewDataHelper<ListView, LoginInfo> mAdapterHelper;
-	private HistoryCell mCell = new HistoryCell();
 
 	@Nullable
 	@Override
@@ -44,7 +43,7 @@ public class HistoryFragment extends Fragment implements iAdapterItem<LoginInfo>
 
 		View view = inflater.inflate(R.layout.activity_history, container, false);
 		SwipeRefreshListView swipeRefreshListView = (SwipeRefreshListView) view.findViewById(R.id.history_swiperefresh_listview);
-		mAdapterHelper = new AbsListViewDataHelper<>(swipeRefreshListView, this, this, 10);
+		mAdapterHelper = new AbsListViewDataHelper<>(swipeRefreshListView, this, this, 6);
 		mAdapterHelper.startLoad();
 
 		mAdapterHelper.setOnItemLongClickLisetner(new AbsListViewDataHelper.OnItemLongClickListener<LoginInfo>() {
