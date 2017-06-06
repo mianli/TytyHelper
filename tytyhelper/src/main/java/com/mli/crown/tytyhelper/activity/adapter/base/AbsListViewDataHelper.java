@@ -131,6 +131,35 @@ public class AbsListViewDataHelper<VIEW_TYPE extends AbsListView, DATA_TYPE> {
         });
     }
 
+    public void currentPageAutoload() {
+        if(mIsBlock) {
+            return;
+        }
+
+        mSwipeRefreshListView.setRefreshing(true);
+        mIsBlock = true;
+        int currentPage = mDataSource.size() / mCountPerPage + 1;
+        mDataSource.clear();
+        mSouce.receiveData(0, currentPage * mCountPerPage - 1, new iDataReceiver<DATA_TYPE>() {
+            @Override
+            public void receiver(List<DATA_TYPE> list) {
+                if(list == null || list.size() == 0) {
+                    isLastPage = true;
+                }else {
+                    mDataSource.addAll(list);
+                    if(mMyAdapter == null) {
+                        mAbsListView.setAdapter(mMyAdapter = new MyAdapter<>(mDataSource, mAdapterItem));
+                    }else {
+                        mMyAdapter.notifyDataSetChanged();
+                    }
+                }
+                mSwipeRefreshListView.setRefreshing(false);
+
+                mIsBlock = false;
+            }
+        });
+    }
+
     public void setOnItemClickListener(final OnItemClickListener<DATA_TYPE> onItemClickListener) {
         mAbsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

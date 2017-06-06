@@ -20,7 +20,10 @@ import com.mli.crown.tytyhelper.activity.adapter.cell.HistoryCell;
 import com.mli.crown.tytyhelper.bean.LoginInfo;
 import com.mli.crown.tytyhelper.customview.SwipeRefreshListView;
 import com.mli.crown.tytyhelper.tools.EntryDbHelper;
+import com.mli.crown.tytyhelper.tools.Global;
 import com.mli.crown.tytyhelper.tools.InfoManager;
+import com.mli.crown.tytyhelper.tools.MessageController;
+import com.mli.crown.tytyhelper.tools.MessageId;
 import com.mli.crown.tytyhelper.tools.Utils;
 
 /**
@@ -69,6 +72,13 @@ public class HistoryFragment extends Fragment implements iAdapterItem<LoginInfo>
 			}
 		});
 
+		Global.handler.registMessage(MessageId.kUpdateHistorylist, new MessageController.iMessageHolder() {
+			@Override
+			public void handleMessage(Object param) {
+				mAdapterHelper.currentPageAutoload();
+			}
+		});
+
 		return view;
 	}
 
@@ -109,5 +119,11 @@ public class HistoryFragment extends Fragment implements iAdapterItem<LoginInfo>
 	@Override
 	public void receiveData(int startPos, int endPos, iDataReceiver<LoginInfo> receiver) {
 		receiver.receiver(mDbHelper.getList(startPos, endPos));
+	}
+
+	@Override
+	public void onDestroyView() {
+		super.onDestroyView();
+		Global.handler.removeMessageById(MessageId.kUpdateHistorylist);
 	}
 }

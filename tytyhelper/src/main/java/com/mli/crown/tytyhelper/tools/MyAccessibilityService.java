@@ -138,6 +138,7 @@ public class MyAccessibilityService extends AccessibilityService {
 			EntryDbHelper dbHelper = new EntryDbHelper(this);
 			if(!dbHelper.isExist(loginInfo)) {
 				dbHelper.saveInfo(loginInfo.getUsername(), loginInfo.getPasswrod(), loginInfo.getDesc());
+				Global.handler.sendMessage(MessageId.kUpdateHistorylist, null);
 			}
 
 			InfoManager.clear(this);
