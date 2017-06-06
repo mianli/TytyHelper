@@ -3,6 +3,7 @@ package com.mli.crown.tytyhelper.activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.Fragment;
@@ -24,7 +25,10 @@ import com.mli.crown.tytyhelper.tools.Log;
 import com.mli.crown.tytyhelper.tools.MyToast;
 import com.mli.crown.tytyhelper.tools.Utils;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends FragmentActivity {
 
@@ -40,10 +44,15 @@ public class MainActivity extends FragmentActivity {
 	private WebFragment mWebFragment;
 	private DownloadFragment mDownloadFragment;
 
+	private Handler mHandler;
+	private boolean mCanClose;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+
+		mHandler = new Handler();
 
 		toolbar = (Toolbar) findViewById(R.id.main_toolbar);
 		toolbar.setTitle(getResources().getString(R.string.app_name));
@@ -148,6 +157,25 @@ public class MainActivity extends FragmentActivity {
 			MyToast.shortShow(this, "辅助功能已打开");
 		}
 	}
+
+	@Override
+	public void onBackPressed() {
+		if(!mCanClose) {
+			mCanClose = true;
+			mHandler.postDelayed(mRunnable, 2000);
+			MyToast.shortShow(this, "再次点击退出");
+		}else {
+			mHandler.removeCallbacks(mRunnable);
+			super.onBackPressed();
+		}
+	}
+
+	private Runnable mRunnable = new Runnable() {
+		@Override
+		public void run() {
+			mCanClose = false;
+		}
+	};
 
 	@Override
 	protected void onDestroy() {
