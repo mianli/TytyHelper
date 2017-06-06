@@ -7,4 +7,9 @@
 		<item name="android:screenOrientation">portrait</item>
 	</style>
 
+	<style name="btn_style">
+		<item name="android:background">@drawable/btn_bg</item>
+		<item name="android:textColor">@color/white</item>
+	</style>
+
 </resources>

@@ -3,6 +3,7 @@ package com.mli.crown.tytyhelper.activity.adapter.cell;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.mli.crown.tytyhelper.R;
@@ -22,12 +23,12 @@ public class DownloadCell implements iCell {
     private TextView descView;
 
     @Override
-    public View createCell(Context context, int position, View container) {
-        if (container == null) {
-            container = LayoutInflater.from(context).inflate(R.layout.item_history, null);
-        }
-        nameView = ViewHolder.get(container, R.id.item_history_user_name);
-        descView = ViewHolder.get(container, R.id.item_history_user_desc);
+    public View createCell(LayoutInflater inflater, ViewGroup container) {
+        View view = inflater.inflate(R.layout.item_history, container, false);
+        DownloadCell cell = new DownloadCell();
+        cell.nameView = ViewHolder.get(container, R.id.item_history_user_name);
+        cell.descView = ViewHolder.get(container, R.id.item_history_user_desc);
+        view.setTag(cell);
         return container;
     }
 

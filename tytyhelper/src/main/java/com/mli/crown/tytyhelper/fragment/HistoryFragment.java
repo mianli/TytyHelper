@@ -46,23 +46,6 @@ public class HistoryFragment extends Fragment implements iAdapterItem<LoginInfo>
 		SwipeRefreshListView swipeRefreshListView = (SwipeRefreshListView) view.findViewById(R.id.history_swiperefresh_listview);
 		mAdapterHelper = new AbsListViewDataHelper<>(swipeRefreshListView, this, this, 10);
 		mAdapterHelper.startLoad();
-		mAdapterHelper.setOnItemClickListener(new AbsListViewDataHelper.OnItemClickListener<LoginInfo>() {
-			@Override
-			public void onItemClick(int position, final LoginInfo data, View view) {
-				if(Utils.isAccessibilitySettingsEnable(getActivity())) {
-					InfoManager.saveInfo(getActivity(), data);
-					LoginHelper.getInstance(getActivity()).filterAndStartApp();
-				}else {
-					Utils.showOpenAccessibilitySetting(getActivity(), new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							InfoManager.saveInfo(getActivity(), data);
-							LoginHelper.getInstance(getActivity()).filterAndStartApp();
-						}
-					});
-				}
-			}
-		});
 
 		mAdapterHelper.setOnItemLongClickLisetner(new AbsListViewDataHelper.OnItemLongClickListener<LoginInfo>() {
 			@Override
@@ -107,13 +90,33 @@ public class HistoryFragment extends Fragment implements iAdapterItem<LoginInfo>
 	}
 
 	@Override
-	public View createCell(int position, View convertView) {
-		return mCell.createCell(getActivity(), position, convertView);
+	public View createCell(int position, ViewGroup convertView) {
+		return HistoryCell.createView(LayoutInflater.from(getActivity()), convertView);
 	}
 
 	@Override
-	public void updateCell(View view, int position, LoginInfo data) {
-		mCell.updateCell(position, data);
+	public void updateCell(View view, int position, final LoginInfo data) {
+		if(view.getTag() instanceof HistoryCell) {
+			HistoryCell cell = (HistoryCell) view.getTag();
+			cell.updateCell(position, data);
+			cell.mActionView.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					if(Utils.isAccessibilitySettingsEnable(getActivity())) {
+						InfoManager.saveInfo(getActivity(), data);
+						LoginHelper.getInstance(getActivity()).filterAndStartApp();
+					}else {
+						Utils.showOpenAccessibilitySetting(getActivity(), new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								InfoManager.saveInfo(getActivity(), data);
+								LoginHelper.getInstance(getActivity()).filterAndStartApp();
+							}
+						});
+					}
+				}
+			});
+		}
 	}
 
 	@Override

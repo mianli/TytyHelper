@@ -1,9 +1,10 @@
 package com.mli.crown.tytyhelper.activity.adapter.cell;
 
-import android.content.Context;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.mli.crown.tytyhelper.R;
@@ -19,14 +20,21 @@ public class HistoryCell implements iCell {
 
     private TextView nameView;
     private TextView descView;
+    public Button mActionView;
+
+    public static View createView(LayoutInflater inflater, ViewGroup container) {
+        View view = inflater.inflate(R.layout.item_history, container, false);
+        HistoryCell cell = new HistoryCell();
+        cell.nameView = ViewHolder.get(view, R.id.item_history_user_name);
+        cell.descView = ViewHolder.get(view, R.id.item_history_user_desc);
+        cell.mActionView = ViewHolder.get(view, R.id.item_history_user_login);
+        view.setTag(cell);
+        return view;
+    }
+
     @Override
-    public View createCell(Context context, int position, View container) {
-        if(container == null) {
-            container = LayoutInflater.from(context).inflate(R.layout.item_history, null);
-        }
-        nameView = ViewHolder.get(container, R.id.item_history_user_name);
-        descView = ViewHolder.get(container, R.id.item_history_user_desc);
-        return container;
+    public View createCell(LayoutInflater inflater, ViewGroup container) {
+        return createView(inflater, container);
     }
 
     @Override

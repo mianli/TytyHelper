@@ -24,7 +24,7 @@ public class SwipeRefreshListView<VIEW_TYPE extends AbsListView> extends SwipeRe
 
     public SwipeRefreshListView(Context context, AttributeSet attrs) {
         super(context, attrs);
-
+        setColorSchemeResources(R.color.theme_color);
         mListView = Utils.cast(LayoutInflater.from(context).inflate(R.layout.listview, this, false));
 
         addView(mListView);

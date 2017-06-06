@@ -9,7 +9,7 @@
 		android:layout_width="match_parent"
 		android:layout_height="60dp"
 		android:text="下载"
-		android:background="#55adad"
+		android:background="@drawable/btn_bg"
 		android:layout_margin="2dp"/>
 
 </LinearLayout>

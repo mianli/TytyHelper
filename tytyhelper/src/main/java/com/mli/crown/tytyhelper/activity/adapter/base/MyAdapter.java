@@ -37,7 +37,9 @@ public class MyAdapter<DATA_TYPE> extends BaseAdapter{
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        convertView = mAdapter.createCell(position, convertView);
+        if(convertView == null) {
+            convertView = mAdapter.createCell(position, parent);
+        }
         mAdapter.updateCell(convertView, position, mSource.get(position));
         return convertView;
     }
